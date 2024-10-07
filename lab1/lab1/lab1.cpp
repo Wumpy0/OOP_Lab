@@ -21,8 +21,10 @@ private:
 public:
 	//- конструктор (по умолчанию + как минимум один конструктор с параметрами);
 	Fraction() : numerator(0), denominator(1) { }
-	Fraction(int a) : numerator(0), denominator(1) {
-		numerator = a;
+	Fraction(double a) : numerator(0), denominator(10000) {
+		a *= 10000;
+		numerator = int(a);
+		this->shorten();
 	}
 	Fraction(int a, int b) : numerator(0), denominator(1) {
 		if (b != 0) {
@@ -71,17 +73,23 @@ public:
 	//- ввод/вывод дроби в консоль;
 	void input() {
 		cout << "Input Fraction:" << endl;
-		cin >> this->numerator >> this->denominator;
+		cin >> numerator >> denominator;
+	}
+	void input_double() {
+		double temp;
+		cout << "Enter the fraction in decimal format:" << endl;
+		cin >> temp;
+
 	}
 	void output() {
-		cout << this->numerator << "/" << this->denominator;
+		cout << numerator << "/" << denominator;
 	}
 	//- приведение дроби к несократимой
 	void shorten() {
 		Fraction temp_f;
-		int n = gcd(this->numerator, this->denominator);
-		this->numerator /= n;
-		this->denominator /= n;
+		int n = gcd(numerator, denominator);
+		numerator /= n;
+		denominator /= n;
 	}
 	//- арифметические операции между дробями(+, -, *, /)
 	Fraction operator+(Fraction r) {
@@ -151,23 +159,21 @@ public:
 	}
 	//- как минимум два уникальных собственных метода на ваше усмотрение
 	//конвертация из обыкновенной дроби в десятичную
-	double to_double() {
-		double temp = double(this->numerator) / this->denominator;
+	operator double() const {
+		double temp = double(numerator) / denominator;
 		return temp;
 	}
-	//конвертация из десятичной в обыкновенную с точностью до 2-х знаков после запятой
-	void to_Fraction(double a) {
-		a *= 100;
-		numerator = int(a);
-		denominator = 100;
-		this->shorten();
+	//выделение целой части
+	operator int() const {
+		int temp = numerator / denominator;
+		return temp;
 	}
 };
 
 int main()
 {
 	Fraction a;
-	Fraction b(2);
+	Fraction b(2,185);
 	Fraction c(3, 5);
 	a.input();
 	cout << "a = ";
@@ -261,7 +267,7 @@ int main()
 	cout << "------------------" << endl;
 
 	double x;
-	x = a.to_double();
+	x = double(a);
 	cout << "a to double: " << x << endl;
 
 	x = 1.755;
