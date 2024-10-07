@@ -79,7 +79,7 @@ public:
 		double temp;
 		cout << "Enter the fraction in decimal format:" << endl;
 		cin >> temp;
-
+		this->to_Fraction(temp);
 	}
 	void output() {
 		cout << numerator << "/" << denominator;
@@ -167,6 +167,13 @@ public:
 	operator int() const {
 		int temp = numerator / denominator;
 		return temp;
+	}
+	//конвертация из десятичной в обыкновенную с точностью до 2-х знаков после запятой
+	void to_Fraction(double a) {
+		a *= 100;
+		numerator = int(a);
+		denominator = 100;
+		this->shorten();
 	}
 };
 
@@ -274,6 +281,10 @@ int main()
 	d.to_Fraction(x);
 	cout << "1.755 to Fraction .2: ";
 	d.output();
+
+	int y;
+	y = int(a);
+	cout << "the whole part of a: " << y << endl;
 
 	return 0;
 }
