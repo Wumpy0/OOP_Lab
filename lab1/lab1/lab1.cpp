@@ -36,7 +36,7 @@ public:
 		}
 	}
 	//- установление/получение числителя/знаменателя дроби;
-	bool set_value(int a, int b) {
+	bool setValue(int a, int b) {
 		if (b != 0) {
 			numerator = a;
 			denominator = b;
@@ -47,10 +47,10 @@ public:
 			return 0;
 		}
 	}
-	void set_numerator(int a) {
+	void setNumerator(int a) {
 		numerator = a;
 	}
-	bool set_denominator(int a) {
+	bool setDenominator(int a) {
 		if (a != 0) {
 			denominator = a;
 			return 1;
@@ -60,14 +60,14 @@ public:
 			return 0;
 		}
 	}
-	void get_value(int& a, int& b) {
+	void getValue(int& a, int& b) const {
 		a = numerator;
 		b = denominator;
 	}
-	void get_denominator(int& a) {
+	void getDenominator(int& a) const {
 		a = denominator;
 	}
-	void get_numerator(int& a) {
+	void getNumerator(int& a) const {
 		a = numerator;
 	}
 	//- ввод/вывод дроби в консоль;
@@ -75,13 +75,13 @@ public:
 		cout << "Input Fraction:" << endl;
 		cin >> numerator >> denominator;
 	}
-	void input_double() {
+	void inputDouble() {
 		double temp;
 		cout << "Enter the fraction in decimal format:" << endl;
 		cin >> temp;
-		this->to_Fraction(temp);
+		this->toFraction(temp);
 	}
-	void output() {
+	void output() const {
 		cout << numerator << "/" << denominator;
 	}
 	//- приведение дроби к несократимой
@@ -94,22 +94,22 @@ public:
 	//- арифметические операции между дробями(+, -, *, /)
 	Fraction operator+(Fraction r) {
 		Fraction temp_f;
-		temp_f.set_value(this->numerator * r.denominator + r.numerator * this->denominator, this->denominator * r.denominator);
+		temp_f.setValue(this->numerator * r.denominator + r.numerator * this->denominator, this->denominator * r.denominator);
 		return temp_f;
 	}
 	Fraction operator-(Fraction r) {
 		Fraction temp_f;
-		temp_f.set_value(this->numerator * r.denominator - r.numerator * this->denominator, this->denominator * r.denominator);
+		temp_f.setValue(this->numerator * r.denominator - r.numerator * this->denominator, this->denominator * r.denominator);
 		return temp_f;
 	}
 	Fraction operator*(Fraction r) {
 		Fraction temp_f;
-		temp_f.set_value(this->numerator * r.numerator, this->denominator * r.denominator);
+		temp_f.setValue(this->numerator * r.numerator, this->denominator * r.denominator);
 		return temp_f;
 	}
 	Fraction operator/(Fraction r) {
 		Fraction temp_f;
-		temp_f.set_value(this->numerator * r.denominator, this->denominator * r.numerator);
+		temp_f.setValue(this->numerator * r.denominator, this->denominator * r.numerator);
 		return temp_f;
 	}
 	//- операции сравнения (>, <, ==, !=)
@@ -169,7 +169,7 @@ public:
 		return temp;
 	}
 	//конвертация из десятичной в обыкновенную с точностью до 2-х знаков после запятой
-	void to_Fraction(double a) {
+	void toFraction(double a) {
 		a *= 100;
 		numerator = int(a);
 		denominator = 100;
@@ -195,25 +195,25 @@ int main()
 
 	cout << "------------------" << endl;
 
-	a.set_value(5, 12);
-	b.set_denominator(3);
-	c.set_numerator(7);
+	a.setValue(15, 12);
+	b.setDenominator(3);
+	c.setNumerator(7);
 	cout << "a = ";
 	a.output();
-	cout << " (set_value(5, 12))" << endl;
+	cout << " (set value(5, 12))" << endl;
 	cout << "b = ";
 	b.output();
-	cout << " (set_denominator(3))" << endl;
+	cout << " (set denominator(3))" << endl;
 	cout << "c = ";
 	c.output();
-	cout << " (set_numerator(7))" << endl;
+	cout << " (set numerator(7))" << endl;
 
 	cout << "------------------" << endl;
 
 	int a1, a2, b1, c2;
-	a.get_value(a1, a2);
-	b.get_numerator(b1);
-	c.get_denominator(c2);
+	a.getValue(a1, a2);
+	b.getNumerator(b1);
+	c.getDenominator(c2);
 	cout << "a value: " << a1 << ", " << a2 << endl;
 	cout << "b numerator: " << b1 << endl;
 	cout << "c denominator: " << c2 << endl;
@@ -278,9 +278,10 @@ int main()
 	cout << "a to double: " << x << endl;
 
 	x = 1.755;
-	d.to_Fraction(x);
+	d.toFraction(x);
 	cout << "1.755 to Fraction .2: ";
 	d.output();
+	cout << endl;
 
 	int y;
 	y = int(a);
