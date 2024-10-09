@@ -1,23 +1,10 @@
 ﻿#include <iostream>
+#include "Fraction.h"
 
 using namespace std;
 
+/*
 class Fraction {
-private:
-	int numerator;   //числитель
-	int denominator; //знаменатель
-	//наибольший общий делитель (Euklids algorithm)
-	int gcd(int a, int b) {
-		while (a != b) {
-			if (a > b) {
-				a -= b;
-			}
-			else {
-				b -= a;
-			}
-		}
-		return a;
-	}
 public:
 	//- конструктор (по умолчанию + как минимум один конструктор с параметрами);
 	Fraction() : numerator(0), denominator(1) { }
@@ -175,12 +162,27 @@ public:
 		denominator = 100;
 		this->shorten();
 	}
+private:
+	int numerator;   //числитель
+	int denominator; //знаменатель
+	//наибольший общий делитель (Euklids algorithm)
+	int gcd(int a, int b) {
+		while (a != b) {
+			if (a > b) {
+				a -= b;
+			}
+			else {
+				b -= a;
+			}
+		}
+		return a;
+	}
 };
-
+*/
 int main()
 {
 	Fraction a;
-	Fraction b(2,185);
+	Fraction b(2.185, 2);
 	Fraction c(3, 5);
 	a.input();
 	cout << "a = ";
@@ -278,7 +280,7 @@ int main()
 	cout << "a to double: " << x << endl;
 
 	x = 1.755;
-	d.toFraction(x);
+	d.fromDouble(x);
 	cout << "1.755 to Fraction .2: ";
 	d.output();
 	cout << endl;
