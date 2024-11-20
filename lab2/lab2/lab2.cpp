@@ -1,6 +1,20 @@
 ﻿#include <iostream>
+#include "Array.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	int arr[6]{ 1, 3, 2, 2, 3, 2};
+	Array<int> a(2);
+	Array<int> b(arr, 6);
+	Array<int> c = b;
+	a += b;
+
+	a.print();
+	b.print();
+	c.print();
+
+
+	std::cout << b[2] <<std::endl;
+
+	return 0;
 }
