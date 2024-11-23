@@ -1,45 +1,45 @@
-#include <iostream>
+п»ї#include <iostream>
 
 template <typename ItemType>
 class Array {
 public:
-	//- конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования);
+	//- РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РёР· РѕР±С‹С‡РЅРѕРіРѕ РјР°СЃСЃРёРІР°, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ);
 	Array(int size = 0);
 	Array(ItemType* source, int size);
 	Array(const Array& source);
-	//- деструктор;
+	//- РґРµСЃС‚СЂСѓРєС‚РѕСЂ;
 	~Array();
 
-	//- получение размера(количества хранимых элементов в настоящий момент);
+	//- РїРѕР»СѓС‡РµРЅРёРµ СЂР°Р·РјРµСЂР°(РєРѕР»РёС‡РµСЃС‚РІР° С…СЂР°РЅРёРјС‹С… СЌР»РµРјРµРЅС‚РѕРІ РІ РЅР°СЃС‚РѕСЏС‰РёР№ РјРѕРјРµРЅС‚);
 	int size() const;
-	//- обмен содержимого с другим массивом (swap);
+	//- РѕР±РјРµРЅ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ СЃ РґСЂСѓРіРёРј РјР°СЃСЃРёРІРѕРј (swap);
 	void swap(Array& other);
-	//- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
+	//- РїРѕРёСЃРє СЌР»РµРјРµРЅС‚Р° (РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅРґРµРєСЃ РїРµСЂРІРѕРіРѕ СЃРѕРІРїР°РІС€РµРіРѕ СЌР»РµРјРµРЅС‚Р°, Р»РёР±Рѕ -1, РµСЃР»Рё СЃРѕРІРїР°РґРµРЅРёР№ РЅРµС‚);
 	int find(ItemType target) const;
-	//- ввод/вывод в консоль (потоковый);
+	//- РІРІРѕРґ/РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ (РїРѕС‚РѕРєРѕРІС‹Р№);
 	void print() const;
 	void scan();
-	//- сортировка элементов (любым алгоритмом);
+	//- СЃРѕСЂС‚РёСЂРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ (Р»СЋР±С‹Рј Р°Р»РіРѕСЂРёС‚РјРѕРј);
 	void qsort();
-	//- вставка элемента по индексу. Если индекс некорректный, вернуть false;
+	//- РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ. Р•СЃР»Рё РёРЅРґРµРєСЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№, РІРµСЂРЅСѓС‚СЊ false;
 	bool insert(ItemType value, int index = - 1);
-	//- удаление элемента по индексу. Если индекс некорректный, вернуть false;
+	//- СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ. Р•СЃР»Рё РёРЅРґРµРєСЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№, РІРµСЂРЅСѓС‚СЊ false;
 	bool remove(int index = -1);
-	//- удаление элемента по значению (первое вхождение). Если элемент отсутствует в массиве, вернуть false;
+	//- СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕ Р·РЅР°С‡РµРЅРёСЋ (РїРµСЂРІРѕРµ РІС…РѕР¶РґРµРЅРёРµ). Р•СЃР»Рё СЌР»РµРјРµРЅС‚ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ РјР°СЃСЃРёРІРµ, РІРµСЂРЅСѓС‚СЊ false;
 	bool removeFirstFound(ItemType value);
-	//- удаление всех элементов с заданным значением;
+	//- СѓРґР°Р»РµРЅРёРµ РІСЃРµС… СЌР»РµРјРµРЅС‚РѕРІ СЃ Р·Р°РґР°РЅРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј;
 	void removeAll(ItemType value);
-	//- поиск максимального / минимального элемента;
+	//- РїРѕРёСЃРє РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ / РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°;
 	int max() const;
 	int min() const;
-	//- получение ссылки на элемент по индексу ([ ]);
+	//- РїРѕР»СѓС‡РµРЅРёРµ СЃСЃС‹Р»РєРё РЅР° СЌР»РµРјРµРЅС‚ РїРѕ РёРЅРґРµРєСЃСѓ ([ ]);
 	ItemType& operator[](int index) const;
-	//- присваивание(=);
+	//- РїСЂРёСЃРІР°РёРІР°РЅРёРµ(=);
 	Array<ItemType>& operator=(const Array& other);
-	//- сравнение (== и !=);
+	//- СЃСЂР°РІРЅРµРЅРёРµ (== Рё !=);
 	bool operator==(const Array& other);
 	bool operator!=(const Array& other);
-	//- сложение (конкатенация) с другим массивом(+ и +=);
+	//- СЃР»РѕР¶РµРЅРёРµ (РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ) СЃ РґСЂСѓРіРёРј РјР°СЃСЃРёРІРѕРј(+ Рё +=);
 	const Array operator+(const Array& other);
 	Array operator+=(const Array& other);
 private:
@@ -82,26 +82,26 @@ Array<ItemType>::Array(const Array& source) {
 	}
 }
 
-//- деструктор;
+//- РґРµСЃС‚СЂСѓРєС‚РѕСЂ;
 template <typename ItemType>
 Array<ItemType>::~Array() {
 	delete[] m_array;
 }
 
-//- получение размера(количества хранимых элементов в настоящий момент);
+//- РїРѕР»СѓС‡РµРЅРёРµ СЂР°Р·РјРµСЂР°(РєРѕР»РёС‡РµСЃС‚РІР° С…СЂР°РЅРёРјС‹С… СЌР»РµРјРµРЅС‚РѕРІ РІ РЅР°СЃС‚РѕСЏС‰РёР№ РјРѕРјРµРЅС‚);
 template <typename ItemType>
 int Array<ItemType>::size() const {
 	return m_size;
 }
 
-//- обмен содержимого с другим массивом (swap);
+//- РѕР±РјРµРЅ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ СЃ РґСЂСѓРіРёРј РјР°СЃСЃРёРІРѕРј (swap);
 template <typename ItemType>
 void Array<ItemType>::swap(Array& other) {
 	std::swap(m_size, other.m_size);
 	std::swap(m_array, other.m_array);
 }
 
-//- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
+//- РїРѕРёСЃРє СЌР»РµРјРµРЅС‚Р° (РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅРґРµРєСЃ РїРµСЂРІРѕРіРѕ СЃРѕРІРїР°РІС€РµРіРѕ СЌР»РµРјРµРЅС‚Р°, Р»РёР±Рѕ -1, РµСЃР»Рё СЃРѕРІРїР°РґРµРЅРёР№ РЅРµС‚);
 template <typename ItemType>
 int Array<ItemType>::find(ItemType target) const {
 	for (int i = 0; i < m_size; i++)
@@ -114,7 +114,7 @@ int Array<ItemType>::find(ItemType target) const {
 	return -1;
 }
 
-//- ввод/вывод в консоль (потоковый);
+//- РІРІРѕРґ/РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ (РїРѕС‚РѕРєРѕРІС‹Р№);
 template <typename ItemType>
 void Array<ItemType>::print() const {
 	if (m_size == 0) {
@@ -143,7 +143,7 @@ void Array<ItemType>::scan() {
 	}
 }
 
-//- сортировка элементов (любым алгоритмом);
+//- СЃРѕСЂС‚РёСЂРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ (Р»СЋР±С‹Рј Р°Р»РіРѕСЂРёС‚РјРѕРј);
 template <typename ItemType>
 void Array<ItemType>::qsort() {
 	quickSortArr(m_array, m_size);
@@ -153,7 +153,7 @@ template <typename ItemType>
 void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 	int i = 0;
 	int j = size - 1;
-	int mid = array[size / 2];
+	ItemType mid = array[size / 2];
 	do {
 		while (array[i] < mid) {
 			i++;
@@ -179,7 +179,7 @@ void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 	}
 }
 
-//- вставка элемента по индексу. Если индекс некорректный, вернуть false;
+//- РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ. Р•СЃР»Рё РёРЅРґРµРєСЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№, РІРµСЂРЅСѓС‚СЊ false;
 template <typename ItemType>
 bool Array<ItemType>::insert(ItemType value, int index) {
 	if (index >= -1 && index <= m_size) {
@@ -206,7 +206,7 @@ bool Array<ItemType>::insert(ItemType value, int index) {
 	}
 }
 
-//- удаление элемента по индексу. Если индекс некорректный, вернуть false;
+//- СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ. Р•СЃР»Рё РёРЅРґРµРєСЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№, РІРµСЂРЅСѓС‚СЊ false;
 template <typename ItemType>
 bool Array<ItemType>::remove(int index) {
 	if (index >= -1 && index <= m_size) {
@@ -232,7 +232,7 @@ bool Array<ItemType>::remove(int index) {
 	}
 }
 
-//- удаление элемента по значению (первое вхождение). Если элемент отсутствует в массиве, вернуть false;
+//- СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕ Р·РЅР°С‡РµРЅРёСЋ (РїРµСЂРІРѕРµ РІС…РѕР¶РґРµРЅРёРµ). Р•СЃР»Рё СЌР»РµРјРµРЅС‚ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ РјР°СЃСЃРёРІРµ, РІРµСЂРЅСѓС‚СЊ false;
 template <typename ItemType>
 bool Array<ItemType>::removeFirstFound(ItemType value) {
 	int index = this->find(value);
@@ -245,7 +245,7 @@ bool Array<ItemType>::removeFirstFound(ItemType value) {
 	}
 }
 
-//- удаление всех элементов с заданным значением;
+//- СѓРґР°Р»РµРЅРёРµ РІСЃРµС… СЌР»РµРјРµРЅС‚РѕРІ СЃ Р·Р°РґР°РЅРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј;
 template <typename ItemType>
 void Array<ItemType>::removeAll(ItemType value) {
 	int index = this->find(value);
@@ -256,7 +256,7 @@ void Array<ItemType>::removeAll(ItemType value) {
 	}
 }
 
-//- поиск максимального / минимального элемента;
+//- РїРѕРёСЃРє РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ / РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°;
 template <typename ItemType>
 int Array<ItemType>::max() const {
 	ItemType max = m_array[0];
@@ -280,13 +280,14 @@ int Array<ItemType>::min() const {
 	return min;
 }
 
-//- получение ссылки на элемент по индексу ([]);
+//- РїРѕР»СѓС‡РµРЅРёРµ СЃСЃС‹Р»РєРё РЅР° СЌР»РµРјРµРЅС‚ РїРѕ РёРЅРґРµРєСЃСѓ ([]);
 template <typename ItemType>
 ItemType& Array<ItemType>::operator[](int index) const {
+	//assert
 	return m_array[index];
 }
 
-//- присваивание(=);
+//- РїСЂРёСЃРІР°РёРІР°РЅРёРµ(=);
 template <typename ItemType>
 Array<ItemType>& Array<ItemType>::operator=(const Array<ItemType>& other) {
 	if (this != &other) {
@@ -300,7 +301,7 @@ Array<ItemType>& Array<ItemType>::operator=(const Array<ItemType>& other) {
 	return *this;
 }
 
-//- сравнение (== и !=);
+//- СЃСЂР°РІРЅРµРЅРёРµ (== Рё !=);
 template <typename ItemType>
 bool Array<ItemType>::operator==(const Array& other) {
 	if (m_size != other.m_size) {
@@ -317,19 +318,10 @@ bool Array<ItemType>::operator==(const Array& other) {
 
 template <typename ItemType>
 bool Array<ItemType>::operator!=(const Array& other) {
-	if (m_size != other.m_size) {
-		return true;
-	}
-	for (int i = 0; i < m_size; i++)
-	{
-		if (m_array[i] != other.m_array[i]) {
-			return true;
-		}
-	}
-	return false;
+	return !operator==(other);
 }
 
-//- сложение (конкатенация) с другим массивом(+ и +=);
+//- СЃР»РѕР¶РµРЅРёРµ (РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ) СЃ РґСЂСѓРіРёРј РјР°СЃСЃРёРІРѕРј(+ Рё +=);
 template <typename ItemType>
  const Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) {
 	Array tempArray(m_size + other.m_size);
