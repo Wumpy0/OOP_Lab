@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#include <cassert>
+#include <iostream>
 
 template <typename ItemType>
 class Array {
@@ -15,33 +16,35 @@ public:
 	//- обмен содержимого с другим массивом (swap);
 	void swap(Array& other);
 	//- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
-	int find(ItemType target) const;
+	int find(ItemType& target) const;
 	//- ввод/вывод в консоль (потоковый);
 	void print() const;
 	void scan();
 	//- сортировка элементов (любым алгоритмом);
 	void qsort();
 	//- вставка элемента по индексу. Если индекс некорректный, вернуть false;
-	bool insert(ItemType value, int index = - 1);
+	bool insert(ItemType& value, int index = - 1);
 	//- удаление элемента по индексу. Если индекс некорректный, вернуть false;
 	bool remove(int index = -1);
 	//- удаление элемента по значению (первое вхождение). Если элемент отсутствует в массиве, вернуть false;
-	bool removeFirstFound(ItemType value);
+	bool removeFirstFound(ItemType& value);
 	//- удаление всех элементов с заданным значением;
-	void removeAll(ItemType value);
+	void removeAll(ItemType& value);
 	//- поиск максимального / минимального элемента;
-	int max() const;
-	int min() const;
+	ItemType max() const;
+	ItemType min() const;
 	//- получение ссылки на элемент по индексу ([ ]);
-	ItemType& operator[](int index) const;
+	ItemType& operator[](int index);
+	const ItemType& operator[](int index) const;
 	//- присваивание(=);
 	Array<ItemType>& operator=(const Array& other);
+	Array<ItemType>& operator=(Array&& other);
 	//- сравнение (== и !=);
 	bool operator==(const Array& other);
 	bool operator!=(const Array& other);
 	//- сложение (конкатенация) с другим массивом(+ и +=);
-	const Array operator+(const Array& other);
-	Array operator+=(const Array& other);
+	const Array<ItemType> operator+(const Array& other);
+	Array<ItemType>& operator+=(const Array& other);
 private:
 	void quickSortArr(ItemType* array, int size);
 	ItemType* m_array = nullptr;
@@ -59,7 +62,7 @@ Array<ItemType>::Array(int size)
 	m_array = new ItemType[size];
 	for (int i = 0; i < size; i++)
 	{
-		m_array[i] = 0;
+		m_array[i] = ItemType(0);
 	}
 }
 
@@ -103,7 +106,7 @@ void Array<ItemType>::swap(Array& other) {
 
 //- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
 template <typename ItemType>
-int Array<ItemType>::find(ItemType target) const {
+int Array<ItemType>::find(ItemType& target) const {
 	for (int i = 0; i < m_size; i++)
 	{
 		if (m_array[i] == target)
@@ -162,7 +165,7 @@ void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 			j--;
 		}
 		if (i <= j) {
-			int tmp = array[i];
+			ItemType tmp = array[i];
 			array[i] = array[j];
 			array[j] = tmp;
 
@@ -181,7 +184,7 @@ void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 
 //- вставка элемента по индексу. Если индекс некорректный, вернуть false;
 template <typename ItemType>
-bool Array<ItemType>::insert(ItemType value, int index) {
+bool Array<ItemType>::insert(ItemType& value, int index) {
 	if (index >= -1 && index <= m_size) {
 		if (index == -1) {
 			index = m_size;
@@ -234,7 +237,7 @@ bool Array<ItemType>::remove(int index) {
 
 //- удаление элемента по значению (первое вхождение). Если элемент отсутствует в массиве, вернуть false;
 template <typename ItemType>
-bool Array<ItemType>::removeFirstFound(ItemType value) {
+bool Array<ItemType>::removeFirstFound(ItemType& value) {
 	int index = this->find(value);
 	if (index >= 0) {
 		this->remove(index);
@@ -247,7 +250,7 @@ bool Array<ItemType>::removeFirstFound(ItemType value) {
 
 //- удаление всех элементов с заданным значением;
 template <typename ItemType>
-void Array<ItemType>::removeAll(ItemType value) {
+void Array<ItemType>::removeAll(ItemType& value) {
 	int index = this->find(value);
 	while (index != -1)
 	{
@@ -258,7 +261,7 @@ void Array<ItemType>::removeAll(ItemType value) {
 
 //- поиск максимального / минимального элемента;
 template <typename ItemType>
-int Array<ItemType>::max() const {
+ItemType Array<ItemType>::max() const {
 	ItemType max = m_array[0];
 	for (int i = 1; i < m_size; i++)
 	{
@@ -269,7 +272,7 @@ int Array<ItemType>::max() const {
 	return max;
 }
 template <typename ItemType>
-int Array<ItemType>::min() const {
+ItemType Array<ItemType>::min() const {
 	ItemType min = m_array[0];
 	for (int i = 1; i < m_size; i++)
 	{
@@ -282,8 +285,15 @@ int Array<ItemType>::min() const {
 
 //- получение ссылки на элемент по индексу ([]);
 template <typename ItemType>
-ItemType& Array<ItemType>::operator[](int index) const {
+ItemType& Array<ItemType>::operator[](int index){
 	//assert
+	assert(index <= m_size);
+	return m_array[index];
+}
+template <typename ItemType>
+const ItemType& Array<ItemType>::operator[](int index) const {
+	//assert
+	assert(index <= m_size);
 	return m_array[index];
 }
 
@@ -291,13 +301,14 @@ ItemType& Array<ItemType>::operator[](int index) const {
 template <typename ItemType>
 Array<ItemType>& Array<ItemType>::operator=(const Array<ItemType>& other) {
 	if (this != &other) {
-		delete[] m_array;
-		m_size = other.m_size;
-		m_array = new ItemType[m_size];
-		for (int i = 0; i < m_size; i++) {
-			m_array[i] = other.m_array[i];
-		}
+		Array<ItemType> copy(other);
+		swap(copy);
 	}
+	return *this;
+}
+template <typename ItemType>
+Array<ItemType>& Array<ItemType>::operator=(Array&& other) {
+	swap(other);
 	return *this;
 }
 
@@ -323,7 +334,7 @@ bool Array<ItemType>::operator!=(const Array& other) {
 
 //- сложение (конкатенация) с другим массивом(+ и +=);
 template <typename ItemType>
- const Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) {
+const Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) {
 	Array tempArray(m_size + other.m_size);
 	for (int i = 0; i < m_size; i++)
 	{
@@ -337,18 +348,8 @@ template <typename ItemType>
 }
 
 template <typename ItemType>
-Array<ItemType> Array<ItemType>::operator+=(const Array<ItemType>& other) {
-	ItemType* tempArray = new ItemType[m_size + other.m_size];
-	for (int i = 0; i < m_size; i++)
-	{
-		tempArray[i] = m_array[i];
-	}
-	for (int i = 0; i < other.m_size; i++)
-	{
-		tempArray[i + m_size] = other.m_array[i];
-	}
-	m_size = m_size + other.m_size;
-	delete[] m_array;
-	m_array = tempArray;
+Array<ItemType>& Array<ItemType>::operator+=(const Array& other) {
+	Array<ItemType> tempArray = operator+(other);
+	swap(tempArray);
 	return *this;
 }
