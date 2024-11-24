@@ -1,8 +1,11 @@
 ﻿#include <cassert>
+#include <algorithm>
 #include <iostream>
 
 template <typename ItemType>
 class Array {
+public:
+	typedef ItemType* iterator;
 public:
 	//- конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования);
 	Array(int size = 0);
@@ -10,20 +13,21 @@ public:
 	Array(const Array& source);
 	//- деструктор;
 	~Array();
-
+public:
 	//- получение размера(количества хранимых элементов в настоящий момент);
 	int size() const;
 	//- обмен содержимого с другим массивом (swap);
 	void swap(Array& other);
 	//- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
-	int find(ItemType& target) const;
+	int find(const ItemType& target) const;
 	//- ввод/вывод в консоль (потоковый);
 	void print() const;
 	void scan();
 	//- сортировка элементов (любым алгоритмом);
 	void qsort();
+	void sort();
 	//- вставка элемента по индексу. Если индекс некорректный, вернуть false;
-	bool insert(ItemType& value, int index = - 1);
+	bool insert(const ItemType& value, int index = - 1);
 	//- удаление элемента по индексу. Если индекс некорректный, вернуть false;
 	bool remove(int index = -1);
 	//- удаление элемента по значению (первое вхождение). Если элемент отсутствует в массиве, вернуть false;
@@ -43,8 +47,21 @@ public:
 	bool operator==(const Array& other);
 	bool operator!=(const Array& other);
 	//- сложение (конкатенация) с другим массивом(+ и +=);
-	const Array<ItemType> operator+(const Array& other);
+	Array<ItemType> operator+(const Array& other) const;
 	Array<ItemType>& operator+=(const Array& other);
+	//- добавление элемента в конец массива (+ и +=);
+	Array<ItemType> operator+(const ItemType& value) const;
+	Array<ItemType>& operator+=(const ItemType& value);
+	
+	//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
+	iterator begin();
+	iterator end();
+	const iterator begin() const;
+	const iterator end() const;
+	//- вставка элемента перед итератором;
+	void insertBefore();
+	//- удаление элемента или диапазона элементов с помощью итераторов;
+	void removeFromTo();
 private:
 	void quickSortArr(ItemType* array, int size);
 	ItemType* m_array = nullptr;
@@ -79,7 +96,7 @@ template <typename ItemType>
 Array<ItemType>::Array(const Array& source) {
 	m_size = source.m_size;
 	m_array = new ItemType[m_size];
-	for (int i = 0; i < m_size; i++)
+	for (int i = 0; i < source.m_size; i++)
 	{
 		m_array[i] = source.m_array[i];
 	}
@@ -106,7 +123,7 @@ void Array<ItemType>::swap(Array& other) {
 
 //- поиск элемента (возвращает индекс первого совпавшего элемента, либо -1, если совпадений нет);
 template <typename ItemType>
-int Array<ItemType>::find(ItemType& target) const {
+int Array<ItemType>::find(const ItemType& target) const {
 	for (int i = 0; i < m_size; i++)
 	{
 		if (m_array[i] == target)
@@ -148,10 +165,13 @@ void Array<ItemType>::scan() {
 
 //- сортировка элементов (любым алгоритмом);
 template <typename ItemType>
+void Array<ItemType>::sort() {
+	std::sort(begin(), end());
+}
+template <typename ItemType>
 void Array<ItemType>::qsort() {
 	quickSortArr(m_array, m_size);
 }
-
 template <typename ItemType>
 void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 	int i = 0;
@@ -184,7 +204,7 @@ void Array<ItemType>::quickSortArr(ItemType* array, int size) {
 
 //- вставка элемента по индексу. Если индекс некорректный, вернуть false;
 template <typename ItemType>
-bool Array<ItemType>::insert(ItemType& value, int index) {
+bool Array<ItemType>::insert(const ItemType& value, int index) {
 	if (index >= -1 && index <= m_size) {
 		if (index == -1) {
 			index = m_size;
@@ -334,7 +354,7 @@ bool Array<ItemType>::operator!=(const Array& other) {
 
 //- сложение (конкатенация) с другим массивом(+ и +=);
 template <typename ItemType>
-const Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) {
+Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) const{
 	Array tempArray(m_size + other.m_size);
 	for (int i = 0; i < m_size; i++)
 	{
@@ -349,7 +369,61 @@ const Array<ItemType> Array<ItemType>::operator+(const Array<ItemType>& other) {
 
 template <typename ItemType>
 Array<ItemType>& Array<ItemType>::operator+=(const Array& other) {
-	Array<ItemType> tempArray = operator+(other);
-	swap(tempArray);
+	operator+(other).swap(*this);
+	return *this;
+}
+
+// Переопределение оператора вывода <<
+template <typename ItemType>
+std::ostream& operator<<(std::ostream& os, const Array<ItemType>& array) {
+	os << '[' << array[0];
+	for (int i = 1; i < array.size(); ++i) {
+		os << ", " << array[i];
+	}
+	os << ']';
+	return os;
+}
+
+// Переопределение оператора ввода >>
+template <typename ItemType>
+std::istream& operator>>(std::istream& is, Array<ItemType>& array) {
+	array = Array<ItemType>(array.size());
+	for (int i = 0; i < array.size(); ++i) {
+		is >> array[i];
+	}
+	return is;
+}
+
+//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
+template <typename ItemType> 
+typename Array<ItemType>::iterator Array<ItemType>::begin() {
+	return m_array;
+}
+
+template <typename ItemType> 
+typename Array<ItemType>::iterator Array<ItemType>::end() {
+	return m_array + m_size;
+}
+
+template <typename ItemType>
+const typename Array<ItemType>::iterator Array<ItemType>::begin() const {
+	return m_array;
+}
+
+template <typename ItemType>
+const typename Array<ItemType>::iterator Array<ItemType>::end() const {
+	return m_array + m_size;
+}
+
+//- добавление элемента в конец массива (+ и +=);
+template <typename ItemType>
+Array<ItemType> Array<ItemType>::operator+(const ItemType& value) const {
+	Array tempArray(*this);
+	tempArray.insert(value);
+	return tempArray;
+}
+template <typename ItemType>
+Array<ItemType>& Array<ItemType>::operator+=(const ItemType& value) {
+	operator+(value).swap(*this);
 	return *this;
 }
