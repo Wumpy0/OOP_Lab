@@ -3,18 +3,17 @@
 
 int main()
 {
-	int arr[6]{ 1, 3, 2, 2, 3, 2};
+	int arr[6]{ 1, 2, 3, 4, 5, 6};
 	Array<int> a(2);
 	Array<int> b(arr, 6);
 	Array<int> c(a);
 	c += 3;
-
-	a.print();
 	b.print();
-	c.print();
+	b.remove(b.begin(), b.end());
 
 
 	std::cout << b << std::endl;
+	b.print();
 
 	return 0;
 }

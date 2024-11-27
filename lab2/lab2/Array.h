@@ -6,6 +6,7 @@ template <typename ItemType>
 class Array {
 public:
 	typedef ItemType* iterator;
+	typedef ItemType* pointer;
 public:
 	//- конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования);
 	Array(int size = 0);
@@ -58,10 +59,28 @@ public:
 	iterator end();
 	const iterator begin() const;
 	const iterator end() const;
+public:
+	class Iterator {
+	public:
+		Iterator();
+		Iterator(pointer ptr);
+		ItemType& operator*();
+		Iterator& operator++();
+		pointer getPointer();
+		bool operator<(const Iterator& other) const;
+		bool operator>(const Iterator& other) const;
+		bool operator<=(const Iterator& other) const;
+		bool operator>=(const Iterator& other) const;
+		bool operator==(const Iterator& other) const;
+		bool operator!=(const Iterator& other) const;
+	private:
+		pointer ptr;
+	};
+public:
 	//- вставка элемента перед итератором;
-	void insertBefore();
+	void insert(const ItemType& value, Iterator& it);
 	//- удаление элемента или диапазона элементов с помощью итераторов;
-	void removeFromTo();
+	void remove(Iterator first, Iterator last = Iterator());
 private:
 	void quickSortArr(ItemType* array, int size);
 	ItemType* m_array = nullptr;
@@ -376,6 +395,10 @@ Array<ItemType>& Array<ItemType>::operator+=(const Array& other) {
 // Переопределение оператора вывода <<
 template <typename ItemType>
 std::ostream& operator<<(std::ostream& os, const Array<ItemType>& array) {
+	if (array.size() == 0) {
+		os << "[]";
+		return os;
+	}
 	os << '[' << array[0];
 	for (int i = 1; i < array.size(); ++i) {
 		os << ", " << array[i];
@@ -426,4 +449,78 @@ template <typename ItemType>
 Array<ItemType>& Array<ItemType>::operator+=(const ItemType& value) {
 	operator+(value).swap(*this);
 	return *this;
+}
+//Iterator
+template <typename ItemType>	
+Array<ItemType>::Iterator::Iterator() {
+	ptr = nullptr;
+}
+template <typename ItemType>
+Array<ItemType>::Iterator::Iterator(pointer ptr) 
+	: ptr(ptr) {}
+template <typename ItemType>
+ItemType& Array<ItemType>::Iterator::operator*() {
+	return *ptr;
+}
+template <typename ItemType>
+typename Array<ItemType>::Iterator& Array<ItemType>::Iterator::operator++() {
+	++ptr;
+	return *this;
+}
+template <typename ItemType>
+typename Array<ItemType>::pointer Array<ItemType>::Iterator::getPointer() {
+	return ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator<(const Iterator& other) const {
+	return ptr < other.ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator>(const Iterator& other) const {
+	return ptr > other.ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator<=(const Iterator& other) const {
+	return ptr <= other.ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator>=(const Iterator& other) const {
+	return ptr >= other.ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator==(const Iterator& other) const {
+	return ptr == other.ptr;
+}
+template <typename ItemType>
+bool Array<ItemType>::Iterator::operator!=(const Iterator& other) const {
+	return !operator==(other);
+}
+//- вставка элемента перед итератором;
+template <typename ItemType>
+void Array<ItemType>::insert(const ItemType& value, Iterator& it) {
+	assert(it >= end() || it <= begin());
+	insert(value, it.getPointer() - m_array);
+}
+//- удаление элемента или диапазона элементов с помощью итераторов;
+template <typename ItemType>
+void Array<ItemType>::remove(Iterator first, Iterator last) {
+	assert(first >= end() || first <= begin() || last >= end() || last <= begin() || first < last);
+	int startIndex = first.getPointer() - m_array; 
+	int endIndex;
+	if (last == Iterator()) {
+		endIndex = startIndex + 1;
+	}
+	else {
+		endIndex = last.getPointer() - m_array;
+	}
+	ItemType* TempArray = new ItemType[m_size - (endIndex - startIndex)];
+	for (int i = 0; i < startIndex; ++i) {
+		TempArray[i] = m_array[i];
+	}
+	for (int i = endIndex; i < m_size; ++i) {
+		TempArray[startIndex + (i - endIndex)] = m_array[i];
+	}
+	delete[] m_array;
+	m_array = TempArray;
+	m_size = m_size - (endIndex - startIndex);
 }
