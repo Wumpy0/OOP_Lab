@@ -9,7 +9,8 @@ int main()
 	Array<int> c(a);
 	c += 3;
 	b.print();
-	b.remove(b.begin(), b.end());
+	//b.remove(b.begin(), b.end());
+	b.insert(8, b.end());
 
 
 	std::cout << b << std::endl;

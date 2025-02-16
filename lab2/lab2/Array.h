@@ -5,7 +5,6 @@
 template <typename ItemType>
 class Array {
 public:
-	typedef ItemType* iterator;
 	typedef ItemType* pointer;
 public:
 	//- конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования);
@@ -54,11 +53,6 @@ public:
 	Array<ItemType> operator+(const ItemType& value) const;
 	Array<ItemType>& operator+=(const ItemType& value);
 	
-	//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
-	iterator begin();
-	iterator end();
-	const iterator begin() const;
-	const iterator end() const;
 public:
 	class Iterator {
 	public:
@@ -78,6 +72,11 @@ public:
 	};
 public:
 	//- вставка элемента перед итератором;
+	//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
+	Iterator begin();
+	Iterator end();
+	const Iterator begin() const;
+	const Iterator end() const;
 	void insert(const ItemType& value, Iterator& it);
 	//- удаление элемента или диапазона элементов с помощью итераторов;
 	void remove(Iterator first, Iterator last = Iterator());
@@ -251,7 +250,7 @@ bool Array<ItemType>::insert(const ItemType& value, int index) {
 //- удаление элемента по индексу. Если индекс некорректный, вернуть false;
 template <typename ItemType>
 bool Array<ItemType>::remove(int index) {
-	if (index >= -1 && index <= m_size) {
+	if (index >= -1 && index < m_size) {
 		m_size -= 1;
 		if (index == -1) {
 			index = m_size;
@@ -417,27 +416,6 @@ std::istream& operator>>(std::istream& is, Array<ItemType>& array) {
 	return is;
 }
 
-//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
-template <typename ItemType> 
-typename Array<ItemType>::iterator Array<ItemType>::begin() {
-	return m_array;
-}
-
-template <typename ItemType> 
-typename Array<ItemType>::iterator Array<ItemType>::end() {
-	return m_array + m_size;
-}
-
-template <typename ItemType>
-const typename Array<ItemType>::iterator Array<ItemType>::begin() const {
-	return m_array;
-}
-
-template <typename ItemType>
-const typename Array<ItemType>::iterator Array<ItemType>::end() const {
-	return m_array + m_size;
-}
-
 //- добавление элемента в конец массива (+ и +=);
 template <typename ItemType>
 Array<ItemType> Array<ItemType>::operator+(const ItemType& value) const {
@@ -495,10 +473,27 @@ template <typename ItemType>
 bool Array<ItemType>::Iterator::operator!=(const Iterator& other) const {
 	return !operator==(other);
 }
+//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
+template <typename ItemType>
+typename Array<ItemType>::Iterator Array<ItemType>::begin() {
+	return m_array;
+}
+template <typename ItemType>
+typename Array<ItemType>::Iterator Array<ItemType>::end() {
+	return m_array + m_size;
+}
+template <typename ItemType>
+const typename Array<ItemType>::Iterator Array<ItemType>::begin() const {
+	return m_array;
+}
+template <typename ItemType>
+const typename Array<ItemType>::Iterator Array<ItemType>::end() const {
+	return m_array + m_size;
+}
 //- вставка элемента перед итератором;
 template <typename ItemType>
 void Array<ItemType>::insert(const ItemType& value, Iterator& it) {
-	assert(it >= end() || it <= begin());
+	assert(it >= begin() && it <= end());
 	insert(value, it.getPointer() - m_array);
 }
 //- удаление элемента или диапазона элементов с помощью итераторов;
