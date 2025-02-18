@@ -60,7 +60,7 @@ public:
 		Iterator(pointer ptr);
 		ItemType& operator*();
 		Iterator& operator++();
-		pointer getPointer();
+		pointer getPointer() const;
 		bool operator<(const Iterator& other) const;
 		bool operator>(const Iterator& other) const;
 		bool operator<=(const Iterator& other) const;
@@ -71,13 +71,13 @@ public:
 		pointer ptr;
 	};
 public:
-	//- вставка элемента перед итератором;
 	//- получение итераторов на начало/конец массива (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него);
 	Iterator begin();
 	Iterator end();
 	const Iterator begin() const;
 	const Iterator end() const;
-	void insert(const ItemType& value, Iterator& it);
+	//- вставка элемента перед итератором;
+	void insert(const ItemType& value, const Iterator& it);
 	//- удаление элемента или диапазона элементов с помощью итераторов;
 	void remove(Iterator first, Iterator last = Iterator());
 private:
@@ -446,9 +446,10 @@ typename Array<ItemType>::Iterator& Array<ItemType>::Iterator::operator++() {
 	return *this;
 }
 template <typename ItemType>
-typename Array<ItemType>::pointer Array<ItemType>::Iterator::getPointer() {
+typename Array<ItemType>::pointer Array<ItemType>::Iterator::getPointer() const {
 	return ptr;
 }
+
 template <typename ItemType>
 bool Array<ItemType>::Iterator::operator<(const Iterator& other) const {
 	return ptr < other.ptr;
@@ -492,7 +493,7 @@ const typename Array<ItemType>::Iterator Array<ItemType>::end() const {
 }
 //- вставка элемента перед итератором;
 template <typename ItemType>
-void Array<ItemType>::insert(const ItemType& value, Iterator& it) {
+void Array<ItemType>::insert(const ItemType& value, const Iterator& it) {
 	assert(it >= begin() && it <= end());
 	insert(value, it.getPointer() - m_array);
 }
