@@ -3,11 +3,8 @@
 
 int main()
 {
-	BoolVector bv = "1011";
+	BoolVector bv = "1010101111011";
 	bv.invert();
-	int i = bv.length();
-
-
-
-
+	bv[6] = true;
+	std::cout << bv[6];
 }

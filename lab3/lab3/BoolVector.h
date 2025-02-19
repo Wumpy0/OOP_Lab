@@ -7,13 +7,25 @@
 class BoolVector
 {
 public:
+	class Rank {
+	public:
+		Rank();
+		Rank(unsigned char* byte_ptr, size_t pos);
+		~Rank();
+		operator bool() const;
+		Rank& operator=(bool value);
+	private:
+		unsigned char* byte;
+		size_t bit_pos;
+	};
+public:
 	// Конструкторы
 	BoolVector();
 	BoolVector(size_t size, bool value);
 	BoolVector(const char* str);
 	BoolVector(const BoolVector& other);
 	~BoolVector();
-public:
+
 	// Установка в 0/1 i - ой компоненты
 	void set(size_t index);
 	void reset(size_t index);
@@ -26,6 +38,8 @@ public:
 	// Вес вектора (количество единичных компонент)
 	
 	// Ввод / вывод в консоль(потоковый)
+	friend std::ostream& operator<<(std::ostream& os, const BoolVector& bv);
+	friend std::istream& operator>>(std::istream& is, BoolVector& bv);
 	
 	// Обмен содержимого с другим вектором (swap)
 	void swap(BoolVector& other);
@@ -34,22 +48,28 @@ public:
 	// Инверсия i-ой компоненты
 	void invert(size_t index);
 
-	//-получение компоненты([], см.примечание ниже);
-	//-побитовое умножение(&, &=);
-	//-побитовое сложение(| , |=);
-	//-побитовое исключающее ИЛИ(^, ^=);
-	//-побитовые сдвиги(<< , >> , <<=, >>=);
-	//-побитовая инверсия(~);
-	//-присваивание(= ).
-public:
-	class Rank {
-
-	};
+	// Получение компоненты([])
+	Rank operator[](size_t index);
+	bool operator[](size_t index) const;
+	// Побитовое умножение(&=)
+	BoolVector& operator&=(const BoolVector& rvalue);
+	// Побитовое сложение(|=)
+	BoolVector& operator|=(const BoolVector& rvalue);
+	// Побитовое исключающее ИЛИ(^=)
+	BoolVector& operator^=(const BoolVector& rhs);
+	// Побитовые сдвиги(<<=, >>=)
+	
+	// Побитовая инверсия(~)
+	BoolVector operator~() const;
+	// Присваивание(=)
+	BoolVector& operator=(const BoolVector& rvalue);
 private:
 	unsigned char* data;
 	size_t bit_count;
 private:
+	// Вспомогательные методы
 	size_t byte_count() const;
 	void clear_tail();
 	void check_index(size_t index) const;
+	void check_size(const BoolVector& other) const;
 };

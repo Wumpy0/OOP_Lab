@@ -1,5 +1,28 @@
 #include "BoolVector.h"
 
+// Rank
+BoolVector::Rank::Rank() 
+	: byte(nullptr), bit_pos(NULL) {};
+
+BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit_pos)
+	: byte(byte_ptr), bit_pos(bit_pos) {};
+
+BoolVector::Rank::~Rank() {}
+
+BoolVector::Rank::operator bool() const {
+	return (*byte >> bit_pos) & 1;
+}
+
+BoolVector::Rank& BoolVector::Rank::operator=(bool value) {
+	if (value) { 
+		*byte |= (1 << bit_pos);
+	}
+	else { 
+		*byte &= ~(1 << bit_pos);
+	};
+	return *this;
+}
+
 // Вспомогательные методы
 size_t BoolVector::byte_count() const {
 	return (bit_count + 7) / 8;
@@ -14,6 +37,11 @@ void BoolVector::clear_tail() {
 
 void BoolVector::check_index(size_t index) const {
 	assert(index < bit_count);
+}
+
+void BoolVector::check_size(const BoolVector& other) const {
+	if (bit_count != other.bit_count)
+		throw std::invalid_argument("Vector sizes mismatch");
 }
 
 // Конструкторы:
@@ -69,6 +97,32 @@ size_t BoolVector::length() const {
 	return bit_count;
 }
 
+// Получение компоненты([])
+BoolVector::Rank BoolVector::operator[](size_t index) {
+	check_index(index);
+	return Rank(&data[index / 8], index % 8);
+}
+
+bool BoolVector::operator[](size_t index) const {
+	check_index(index);
+	return (data[index / 8] >> (index % 8)) & 1;
+}
+
+// Ввод/вывод
+std::ostream& operator<<(std::ostream& os, const BoolVector& bv) {
+	for (size_t i = 0; i < bv.bit_count; ++i)
+		os << (bv[i] ? '1' : '0');
+	return os;
+}
+
+std::istream& operator>>(std::istream& is, BoolVector& bv) {
+	std::string s;
+	is >> s;
+	BoolVector temp(s.c_str());
+	bv.swap(temp);
+	return is;
+}
+
 // Обмен содержимого с другим вектором (swap)
 void BoolVector::swap(BoolVector& other) {
 	std::swap(data, other.data);
@@ -102,4 +156,49 @@ void BoolVector::set_value(size_t index, bool value, size_t count) {
 void BoolVector::set_all(bool value) {
 	memset(data, value ? 0xFF : 0x00, byte_count());
 	clear_tail();
+}
+
+// Побитовое умножение(&=)
+BoolVector& BoolVector::operator&=(const BoolVector& rvalue) {
+	check_size(rvalue);
+	for (size_t i = 0; i < byte_count(); ++i)
+		data[i] &= rvalue.data[i];
+	return *this;
+}
+
+// Побитовое сложение(|=)
+BoolVector& BoolVector::operator|=(const BoolVector& rvalue) {
+	check_size(rvalue);
+	for (size_t i = 0; i < byte_count(); ++i)
+		data[i] |= rvalue.data[i];
+	return *this;
+}
+
+// Побитовое исключающее ИЛИ(^=)
+BoolVector& BoolVector::operator^=(const BoolVector& rvalue) {
+	check_size(rvalue);
+	for (size_t i = 0; i < byte_count(); ++i)
+		data[i] ^= rvalue.data[i];
+	return *this;
+}
+
+// Побитовые сдвиги(<<=, >>=)
+
+// Побитовая инверсия(~)
+BoolVector BoolVector::operator~() const {
+	BoolVector result(*this);
+	result.invert();
+	return result;
+}
+
+// Присваивание(=)
+BoolVector& BoolVector::operator=(const BoolVector& rvalue) {
+	if (this != &rvalue) {
+		delete[] data;
+		bit_count = rvalue.bit_count;
+		size_t bytes = byte_count();
+		data = new unsigned char[bytes];
+		memcpy(data, rvalue.data, bytes);
+	}
+	return *this;
 }
