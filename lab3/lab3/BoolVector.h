@@ -36,7 +36,7 @@ public:
 	// Длина (количество бит) вектора
 	size_t length() const;
 	// Вес вектора (количество единичных компонент)
-	
+	size_t weight() const;
 	// Ввод / вывод в консоль(потоковый)
 	friend std::ostream& operator<<(std::ostream& os, const BoolVector& bv);
 	friend std::istream& operator>>(std::istream& is, BoolVector& bv);
@@ -56,7 +56,7 @@ public:
 	// Побитовое исключающее ИЛИ(^=)
 	BoolVector& operator^=(const BoolVector& rhs);
 	// Побитовые сдвиги(<<=, >>=)
-	
+	BoolVector& operator<<=(size_t shift);
 	// Побитовая инверсия(~)
 	BoolVector operator~() const;
 	// Присваивание(=)
@@ -79,4 +79,3 @@ BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue);
 // TODO:
 // Внешние <<, >>
 // Побитовые сдвиги(<<=, >>=)
-// Вес вектора (количество единичных компонент)

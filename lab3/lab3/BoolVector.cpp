@@ -1,8 +1,9 @@
 #include "BoolVector.h"
 
 // Rank
-BoolVector::Rank::Rank() 
-	: byte(nullptr), bit_pos(NULL) {};
+BoolVector::Rank::Rank() : 
+	byte(nullptr), 
+	bit_pos(NULL) {};
 
 BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit_pos)
 	: byte(byte_ptr), bit_pos(bit_pos) {};
@@ -47,7 +48,9 @@ void BoolVector::check_size(const BoolVector& other) const {
 // Конструкторы:
 
 // По умолчанию
-BoolVector::BoolVector() : data(nullptr), bit_count(0) {}
+BoolVector::BoolVector() : 
+	data(nullptr), 
+	bit_count(0) {}
 // С параметрами (размер и значение - одно и то же для всех разрядов)
 BoolVector::BoolVector(size_t size, bool value) : bit_count(size) {
 	size_t bytes = byte_count();
@@ -95,6 +98,17 @@ void BoolVector::reset(size_t index) {
 // Длина (количество бит) вектора
 size_t BoolVector::length() const {
 	return bit_count;
+}
+
+// Вес вектора (количество единичных компонент)
+size_t BoolVector::weight() const {
+	size_t count = 0;
+	for (size_t i = 0; i < bit_count; ++i) {
+		if ((*this)[i]) {
+			++count;
+		}
+	}
+	return count;
 }
 
 // Получение компоненты([])
@@ -183,6 +197,32 @@ BoolVector& BoolVector::operator^=(const BoolVector& rvalue) {
 }
 
 // Побитовые сдвиги(<<=, >>=)
+BoolVector& BoolVector::operator<<=(size_t shift) {
+	if (shift >= bit_count) {
+		set_all(false);
+		return *this;
+	}
+
+	size_t byte_shift = shift / 8;
+	size_t bit_shift = shift % 8;
+	size_t bytes = byte_count();
+	if (byte_shift > 0) {
+		for (size_t i = 0; i < bytes - byte_shift; ++i) {
+			data[i] = data[i + byte_shift];
+		}
+		memset(data + bytes - byte_shift, 0, byte_shift);
+	}
+	
+	if (bit_shift > 0) {
+		for (size_t i = 0; i < bytes - 1; ++i) {
+			data[i] = (data[i] >> bit_shift) | (data[i + 1] << (8 - bit_shift));
+		}
+		data[bytes - 1] <<= bit_shift;
+	}
+
+	clear_tail();
+	return *this;
+}
 
 // Побитовая инверсия(~)
 BoolVector BoolVector::operator~() const {
