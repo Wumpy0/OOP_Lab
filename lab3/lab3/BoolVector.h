@@ -6,7 +6,7 @@
 
 class BoolVector
 {
-public:
+private:
 	class Rank {
 	public:
 		Rank();
@@ -40,14 +40,12 @@ public:
 	// Ввод / вывод в консоль(потоковый)
 	friend std::ostream& operator<<(std::ostream& os, const BoolVector& bv);
 	friend std::istream& operator>>(std::istream& is, BoolVector& bv);
-	
 	// Обмен содержимого с другим вектором (swap)
 	void swap(BoolVector& other);
 	// Инверсия всех компонент вектора
 	void invert();
 	// Инверсия i-ой компоненты
 	void invert(size_t index);
-
 	// Получение компоненты([])
 	Rank operator[](size_t index);
 	bool operator[](size_t index) const;
@@ -73,3 +71,12 @@ private:
 	void check_index(size_t index) const;
 	void check_size(const BoolVector& other) const;
 };
+// Внешние логические операторы (&, |, ^, <<, >>)
+BoolVector operator&(const BoolVector& lvalue, const BoolVector& rvalue);
+BoolVector operator|(const BoolVector& lvalue, const BoolVector& rvalue);
+BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue);
+
+// TODO:
+// Внешние <<, >>
+// Побитовые сдвиги(<<=, >>=)
+// Вес вектора (количество единичных компонент)

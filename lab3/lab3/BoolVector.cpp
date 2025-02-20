@@ -202,3 +202,22 @@ BoolVector& BoolVector::operator=(const BoolVector& rvalue) {
 	}
 	return *this;
 }
+
+// Внешние логические операторы (&, |, ^, <<, >>)
+BoolVector operator&(const BoolVector& lvalue, const BoolVector& rvalue) {
+	BoolVector result(lvalue);
+	result &= rvalue;
+	return result;
+}
+
+BoolVector operator|(const BoolVector& lvalue, const BoolVector& rvalue) {
+	BoolVector result(lvalue);
+	result |= rvalue;
+	return result;
+}
+
+BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue) {
+	BoolVector result(lvalue);
+	result ^= rvalue;
+	return result;
+}
