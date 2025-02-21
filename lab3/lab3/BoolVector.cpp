@@ -1,25 +1,19 @@
 #include "BoolVector.h"
 
 // Rank
-BoolVector::Rank::Rank() : 
-	byte(nullptr), 
-	bit_pos(NULL) {};
-
-BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit_pos)
-	: byte(byte_ptr), bit_pos(bit_pos) {};
-
-BoolVector::Rank::~Rank() {}
+BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit)
+	: byte(byte_ptr), bit(bit) {};
 
 BoolVector::Rank::operator bool() const {
-	return (*byte >> bit_pos) & 1;
+	return (*byte >> bit) & 1;
 }
 
 BoolVector::Rank& BoolVector::Rank::operator=(bool value) {
 	if (value) { 
-		*byte |= (1 << bit_pos);
+		*byte |= (1 << bit);
 	}
 	else { 
-		*byte &= ~(1 << bit_pos);
+		*byte &= ~(1 << bit);
 	};
 	return *this;
 }
@@ -224,6 +218,33 @@ BoolVector& BoolVector::operator<<=(size_t shift) {
 	return *this;
 }
 
+BoolVector& BoolVector::operator>>=(size_t shift) {
+	if (shift >= bit_count) {
+		set_all(false);
+		return *this;
+	}
+
+	size_t byte_shift = shift / 8;
+	size_t bit_shift = shift % 8;
+	size_t bytes = byte_count();
+	if (byte_shift > 0) {
+		for (size_t i = bytes - 1; i >= byte_shift; --i) {
+			data[i] = data[i - byte_shift];
+		}
+		memset(data, 0, byte_shift);
+	}
+	
+	if (bit_shift > 0) {
+		for (size_t i = bytes - 1; i > 0; --i) {
+			data[i] = (data[i] << bit_shift) | (data[i - 1] >> (8 - bit_shift));
+		}
+		data[0] <<= bit_shift;
+	}
+
+	clear_tail();
+	return *this;
+}
+
 // Побитовая инверсия(~)
 BoolVector BoolVector::operator~() const {
 	BoolVector result(*this);
@@ -259,5 +280,17 @@ BoolVector operator|(const BoolVector& lvalue, const BoolVector& rvalue) {
 BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue) {
 	BoolVector result(lvalue);
 	result ^= rvalue;
+	return result;
+}
+
+BoolVector operator<<(const BoolVector& bv, size_t shift) {
+	BoolVector result(bv);
+	result <<= shift;
+	return result;
+}
+
+BoolVector operator>>(const BoolVector& bv, size_t shift) {
+	BoolVector result(bv);
+	result >>= shift;
 	return result;
 }

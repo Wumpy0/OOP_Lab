@@ -9,14 +9,12 @@ class BoolVector
 private:
 	class Rank {
 	public:
-		Rank();
 		Rank(unsigned char* byte_ptr, size_t pos);
-		~Rank();
 		operator bool() const;
 		Rank& operator=(bool value);
 	private:
 		unsigned char* byte;
-		size_t bit_pos;
+		size_t bit;
 	};
 public:
 	// Конструкторы
@@ -57,6 +55,7 @@ public:
 	BoolVector& operator^=(const BoolVector& rhs);
 	// Побитовые сдвиги(<<=, >>=)
 	BoolVector& operator<<=(size_t shift);
+	BoolVector& operator>>=(size_t shift);
 	// Побитовая инверсия(~)
 	BoolVector operator~() const;
 	// Присваивание(=)
@@ -75,7 +74,5 @@ private:
 BoolVector operator&(const BoolVector& lvalue, const BoolVector& rvalue);
 BoolVector operator|(const BoolVector& lvalue, const BoolVector& rvalue);
 BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue);
-
-// TODO:
-// Внешние <<, >>
-// Побитовые сдвиги(<<=, >>=)
+BoolVector operator<<(const BoolVector& bv, size_t shift);
+BoolVector operator>>(const BoolVector& bv, size_t shift);

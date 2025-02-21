@@ -2,11 +2,11 @@
 #include "BoolVector.h"
 
 int main() {
-    BoolVector bv("111100001111000011");
-    std::cout << "Original: " << bv << std::endl;
+    BoolVector bv("100100001111011011110000000000000000");
+    std::cout << "Original:  " << bv << std::endl;
 
-    bv <<= 11;
-    std::cout << "After <<=: " << bv << std::endl;
+    bv >>= 11;
+    std::cout << "After >>=: " << bv << std::endl;
 
     return 0;
 }
