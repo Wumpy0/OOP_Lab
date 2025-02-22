@@ -21,10 +21,16 @@
     <ClCompile Include="BoolMatrix.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\lab3\lab3\BoolVector.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoolMatrix.h">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lab3\lab3\BoolVector.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
