@@ -9,7 +9,7 @@ class BoolVector
 private:
 	class Rank {
 	public:
-		Rank(unsigned char* byte_ptr, size_t pos);
+		Rank(unsigned char* byte_ptr, size_t bit);
 		operator bool() const;
 		Rank& operator=(bool value);
 	private:
@@ -28,9 +28,9 @@ public:
 	void set(size_t index);
 	void reset(size_t index);
 	// Установка в 0/1 k компонент, начиная с i-ой
-	void set_value(size_t index, bool value, size_t count = 1);
+	void setValue(size_t index, bool value, size_t count = 1);
 	// Установка в 0/1 всех компонент вектора
-	void set_all(bool value);
+	void setAll(bool value);
 	// Длина (количество бит) вектора
 	size_t length() const;
 	// Вес вектора (количество единичных компонент)
@@ -65,10 +65,10 @@ private:
 	size_t bit_count;
 private:
 	// Вспомогательные методы
-	size_t byte_count() const;
-	void clear_tail();
-	void check_index(size_t index) const;
-	void check_size(const BoolVector& other) const;
+	size_t byteCount() const;
+	void clearTail();
+	void checkIndex(size_t index) const;
+	void checkSize(const BoolVector& other) const;
 };
 // Внешние логические операторы (&, |, ^, <<, >>)
 BoolVector operator&(const BoolVector& lvalue, const BoolVector& rvalue);

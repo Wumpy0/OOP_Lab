@@ -1,8 +1,9 @@
 #include "BoolVector.h"
 
 // Rank
-BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit)
-	: byte(byte_ptr), bit(bit) {};
+BoolVector::Rank::Rank(unsigned char* byte_ptr, size_t bit) :
+	byte(byte_ptr), 
+	bit(bit) {};
 
 BoolVector::Rank::operator bool() const {
 	return (*byte >> bit) & 1;
@@ -19,22 +20,22 @@ BoolVector::Rank& BoolVector::Rank::operator=(bool value) {
 }
 
 // Вспомогательные методы
-size_t BoolVector::byte_count() const {
+size_t BoolVector::byteCount() const {
 	return (bit_count + 7) / 8;
 }
 
-void BoolVector::clear_tail() {
+void BoolVector::clearTail() {
 	size_t extra_bits = bit_count % 8;
 	if (extra_bits != 0) {
-		data[byte_count() - 1] &= (0xFF >> (8 - extra_bits));
+		data[byteCount() - 1] &= (0xFF >> (8 - extra_bits));
 	}
 }
 
-void BoolVector::check_index(size_t index) const {
+void BoolVector::checkIndex(size_t index) const {
 	assert(index < bit_count);
 }
 
-void BoolVector::check_size(const BoolVector& other) const {
+void BoolVector::checkSize(const BoolVector& other) const {
 	if (bit_count != other.bit_count)
 		throw std::invalid_argument("Vector sizes mismatch");
 }
@@ -47,15 +48,15 @@ BoolVector::BoolVector() :
 	bit_count(0) {}
 // С параметрами (размер и значение - одно и то же для всех разрядов)
 BoolVector::BoolVector(size_t size, bool value) : bit_count(size) {
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	data = new unsigned char[bytes];
 	memset(data, value ? 0xFF : 0x00, bytes);
-	clear_tail();
+	clearTail();
 }
 // Конструктор из массива const char *
 BoolVector::BoolVector(const char* str) {
 	bit_count = strlen(str);
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	data = new unsigned char[bytes] {};
 
 	for (size_t i = 0; i < bit_count; ++i) {
@@ -69,7 +70,7 @@ BoolVector::BoolVector(const char* str) {
 }
 // Конструктор копирования
 BoolVector::BoolVector(const BoolVector& other) : bit_count(other.bit_count) {
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	data = new unsigned char[bytes];
 	memcpy(data, other.data, bytes);
 }
@@ -80,12 +81,12 @@ BoolVector::~BoolVector() {
 
 // Установка в 0 / 1 i - ой компоненты
 void BoolVector::set(size_t index) {
-	check_index(index);
+	checkIndex(index);
 	data[index / 8] |= (1 << (index % 8));
 }
 
 void BoolVector::reset(size_t index) {
-	check_index(index);
+	checkIndex(index);
 	data[index / 8] &= ~(1 << (index % 8));
 }
 
@@ -107,12 +108,12 @@ size_t BoolVector::weight() const {
 
 // Получение компоненты([])
 BoolVector::Rank BoolVector::operator[](size_t index) {
-	check_index(index);
+	checkIndex(index);
 	return Rank(&data[index / 8], index % 8);
 }
 
 bool BoolVector::operator[](size_t index) const {
-	check_index(index);
+	checkIndex(index);
 	return (data[index / 8] >> (index % 8)) & 1;
 }
 
@@ -139,21 +140,21 @@ void BoolVector::swap(BoolVector& other) {
 
 // Инверсия всех компонент вектора
 void BoolVector::invert() {
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	for (size_t i = 0; i < bytes; ++i)
 		data[i] = ~data[i];
-	clear_tail();
+	clearTail();
 }
 
 // Инверсия i-ой компоненты
 void BoolVector::invert(size_t index) {
-	check_index(index);
+	checkIndex(index);
 	data[index / 8] ^= (1 << (index % 8));
 }
 
 // Установка в 0/1 k компонент, начиная с i-ой
-void BoolVector::set_value(size_t index, bool value, size_t count) {
-	check_index(index);
+void BoolVector::setValue(size_t index, bool value, size_t count) {
+	checkIndex(index);
 	assert(index + count <= bit_count);
 
 	for (size_t i = index; i < index + count; ++i)
@@ -161,31 +162,31 @@ void BoolVector::set_value(size_t index, bool value, size_t count) {
 }
 
 // Установка в 0/1 всех компонент вектора
-void BoolVector::set_all(bool value) {
-	memset(data, value ? 0xFF : 0x00, byte_count());
-	clear_tail();
+void BoolVector::setAll(bool value) {
+	memset(data, value ? 0xFF : 0x00, byteCount());
+	clearTail();
 }
 
 // Побитовое умножение(&=)
 BoolVector& BoolVector::operator&=(const BoolVector& rvalue) {
-	check_size(rvalue);
-	for (size_t i = 0; i < byte_count(); ++i)
+	checkSize(rvalue);
+	for (size_t i = 0; i < byteCount(); ++i)
 		data[i] &= rvalue.data[i];
 	return *this;
 }
 
 // Побитовое сложение(|=)
 BoolVector& BoolVector::operator|=(const BoolVector& rvalue) {
-	check_size(rvalue);
-	for (size_t i = 0; i < byte_count(); ++i)
+	checkSize(rvalue);
+	for (size_t i = 0; i < byteCount(); ++i)
 		data[i] |= rvalue.data[i];
 	return *this;
 }
 
 // Побитовое исключающее ИЛИ(^=)
 BoolVector& BoolVector::operator^=(const BoolVector& rvalue) {
-	check_size(rvalue);
-	for (size_t i = 0; i < byte_count(); ++i)
+	checkSize(rvalue);
+	for (size_t i = 0; i < byteCount(); ++i)
 		data[i] ^= rvalue.data[i];
 	return *this;
 }
@@ -193,13 +194,13 @@ BoolVector& BoolVector::operator^=(const BoolVector& rvalue) {
 // Побитовые сдвиги(<<=, >>=)
 BoolVector& BoolVector::operator<<=(size_t shift) {
 	if (shift >= bit_count) {
-		set_all(false);
+		setAll(false);
 		return *this;
 	}
 
 	size_t byte_shift = shift / 8;
 	size_t bit_shift = shift % 8;
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	if (byte_shift > 0) {
 		for (size_t i = 0; i < bytes - byte_shift; ++i) {
 			data[i] = data[i + byte_shift];
@@ -214,19 +215,19 @@ BoolVector& BoolVector::operator<<=(size_t shift) {
 		data[bytes - 1] <<= bit_shift;
 	}
 
-	clear_tail();
+	clearTail();
 	return *this;
 }
 
 BoolVector& BoolVector::operator>>=(size_t shift) {
 	if (shift >= bit_count) {
-		set_all(false);
+		setAll(false);
 		return *this;
 	}
 
 	size_t byte_shift = shift / 8;
 	size_t bit_shift = shift % 8;
-	size_t bytes = byte_count();
+	size_t bytes = byteCount();
 	if (byte_shift > 0) {
 		for (size_t i = bytes - 1; i >= byte_shift; --i) {
 			data[i] = data[i - byte_shift];
@@ -241,7 +242,7 @@ BoolVector& BoolVector::operator>>=(size_t shift) {
 		data[0] <<= bit_shift;
 	}
 
-	clear_tail();
+	clearTail();
 	return *this;
 }
 
@@ -257,7 +258,7 @@ BoolVector& BoolVector::operator=(const BoolVector& rvalue) {
 	if (this != &rvalue) {
 		delete[] data;
 		bit_count = rvalue.bit_count;
-		size_t bytes = byte_count();
+		size_t bytes = byteCount();
 		data = new unsigned char[bytes];
 		memcpy(data, rvalue.data, bytes);
 	}
