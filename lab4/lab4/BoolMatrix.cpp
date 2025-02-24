@@ -25,7 +25,21 @@ BoolMatrix::BoolMatrix(size_t rows, size_t cols, bool value) :
 }
 
 // Конструктор из матрицы char
+BoolMatrix::BoolMatrix(const std::vector<const char*>& charMatrix) {
+	if (charMatrix.empty()) {
+		rows = 0;
+		cols = 0;
+		return;
+	}
 
+	rows = charMatrix.size();
+	cols = strlen(charMatrix[0]);
+
+	for (const char* row : charMatrix) {
+		assert(strlen(row) == cols);
+		matrix.emplace_back(row);
+	}
+}
 
 // Конструктор копирования
 BoolMatrix::BoolMatrix(const BoolMatrix& other) :
@@ -92,7 +106,27 @@ size_t BoolMatrix::rowWeight(size_t j) const {
 	return matrix[j].weight();
 }
 
-// Инверсия в i - ой компоненты j - ой строки
-// Инверсия k компонент j - ой строки, начиная с i - ой компоненты
-// Установка в 0 / 1 i - ой компоненты j - ой строки
-// Установка в 0 / 1 k компонент j - ой строки, начиная с i - ой компоненты
+// Инверсия i - ой компоненты j - ой строки + инверсия k компонент j - ой строки, начиная с i - ой компоненты
+void BoolMatrix::invert(size_t j, size_t i, size_t count) {
+	count -= 1;
+	checkRow(j);
+	checkCol(i);
+	if (count) {
+		checkCol(i + count);
+	}
+	for (size_t pos = i; pos <= i + count; ++pos) {
+		matrix[j].invert(pos);
+	}
+}
+// Установка в 0 / 1 i - ой компоненты j - ой строки + установка в 0 / 1 k компонент j - ой строки, начиная с i - ой компоненты
+void BoolMatrix::setValue(size_t j, size_t i, bool value, size_t count) {
+	count -= 1;
+	checkRow(j);
+	checkCol(i);
+	if (count) {
+		checkCol(i + count);
+	}
+	for (size_t pos = i; pos <= i + count; ++pos) {
+		value ? matrix[j].set(pos) : matrix[j].reset(pos);
+	}
+}
