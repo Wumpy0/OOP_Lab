@@ -13,8 +13,8 @@ private:
 		operator bool() const;
 		Rank& operator=(bool value);
 	private:
-		unsigned char* byte;
-		size_t bit;
+		unsigned char* byte_;
+		size_t bit_;
 	};
 public:
 	// Конструкторы
@@ -48,9 +48,9 @@ public:
 	Rank operator[](size_t index);
 	bool operator[](size_t index) const;
 	// Побитовое умножение(&=)
-	BoolVector& operator&=(const BoolVector& rvalue);
+	BoolVector& operator&=(const BoolVector& rhs);
 	// Побитовое сложение(|=)
-	BoolVector& operator|=(const BoolVector& rvalue);
+	BoolVector& operator|=(const BoolVector& rhs);
 	// Побитовое исключающее ИЛИ(^=)
 	BoolVector& operator^=(const BoolVector& rhs);
 	// Побитовые сдвиги(<<=, >>=)
@@ -59,10 +59,10 @@ public:
 	// Побитовая инверсия(~)
 	BoolVector operator~() const;
 	// Присваивание(=)
-	BoolVector& operator=(const BoolVector& rvalue);
+	BoolVector& operator=(const BoolVector& rhs);
 private:
-	unsigned char* data;
-	size_t bit_count;
+	unsigned char* data_;
+	size_t bitCount_;
 private:
 	// Вспомогательные методы
 	size_t byteCount() const;
@@ -71,8 +71,8 @@ private:
 	void checkSize(const BoolVector& other) const;
 };
 // Внешние логические операторы (&, |, ^, <<, >>)
-BoolVector operator&(const BoolVector& lvalue, const BoolVector& rvalue);
-BoolVector operator|(const BoolVector& lvalue, const BoolVector& rvalue);
-BoolVector operator^(const BoolVector& lvalue, const BoolVector& rvalue);
+BoolVector operator&(const BoolVector& lhs, const BoolVector& rhs);
+BoolVector operator|(const BoolVector& lhs, const BoolVector& rhs);
+BoolVector operator^(const BoolVector& lhs, const BoolVector& rhs);
 BoolVector operator<<(const BoolVector& bv, size_t shift);
 BoolVector operator>>(const BoolVector& bv, size_t shift);
