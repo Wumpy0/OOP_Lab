@@ -13,7 +13,6 @@ int main() {
         "0000010"
     };
     BoolMatrix bm(charMatrix);
-    bm.setValue(3, 5, true, 2);
 
     cout << bm << endl;
 

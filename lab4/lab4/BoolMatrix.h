@@ -25,8 +25,8 @@ public:
 	// Обмен содержимого с другой матрицей (swap)
 	void swap(BoolMatrix& other);
 	// Ввод / вывод в консоль(потоковый)
-	friend std::ostream& operator<<(std::ostream& os, const BoolMatrix& bm);
 
+	friend std::ostream& operator<<(std::ostream& os, const BoolMatrix& bm);
 	// Вес матрицы(количество единичных компонент)
 	size_t weight() const;
 	// Конъюнкция всех строк(возвращает булев вектор)
@@ -35,17 +35,32 @@ public:
 	BoolVector disjunction();
 	// Вес j - ой строки
 	size_t rowWeight(size_t j) const;
-	// Инверсия i - ой компоненты j - ой строки + инверсия k компонент j - ой строки, начиная с i - ой компоненты
+	// Инверсия i - ой компоненты j - ой строки + 
+	// инверсия k компонент j - ой строки, начиная с i - ой компоненты
 	void invert(size_t j, size_t i, size_t count = 1);
-	// Установка в 0 / 1 i - ой компоненты j - ой строки + установка в 0 / 1 k компонент j - ой строки, начиная с i - ой компоненты
+	// Установка в 0 / 1 i - ой компоненты j - ой строки + 
+	// установка в 0 / 1 k компонент j - ой строки, начиная с i - ой компоненты
 	void setValue(size_t j, size_t i, bool value, size_t count = 1);
+	// Присваивание(=)
+	BoolMatrix& operator=(const BoolMatrix& rhs);
+	// Получение строки([])
+
+	// Построчное побитовое умножение(&=)
+
+	// Построчное побитовое сложение(|=)
+
+	// Построчное побитовое исключающее ИЛИ(^=)
+
+	// Построчная побитовая инверсия(~)
+	BoolMatrix operator~() const;
 private:
-	std::vector<BoolVector> matrix;
-	size_t rows;
-	size_t cols;
+	std::vector<BoolVector> matrix_;
+	size_t rows_;
+	size_t cols_;
 private:
 	// Вспомогательные методы
 	void checkRow(size_t index) const;
 	void checkCol(size_t index) const;
 };
 
+// Внешние логические операторы (&, |, ^)
