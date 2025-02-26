@@ -12,7 +12,15 @@ int main() {
         "1111101",
         "0000010"
     };
+    std::vector<const char*> charMatrix2 = {
+        "1010110",
+        "0101001",
+        "1000101",
+        "1110010"
+    };
     BoolMatrix bm(charMatrix);
+    BoolMatrix bm2(charMatrix2);
+    bm = bm ^ bm2;
 
     cout << bm << endl;
 

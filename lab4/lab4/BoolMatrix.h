@@ -44,13 +44,14 @@ public:
 	// Присваивание(=)
 	BoolMatrix& operator=(const BoolMatrix& rhs);
 	// Получение строки([])
-
+	BoolVector& operator[](size_t index);
+	const BoolVector& operator[](size_t index) const;
 	// Построчное побитовое умножение(&=)
-
+	BoolMatrix& operator&=(const BoolMatrix& rhs);
 	// Построчное побитовое сложение(|=)
-
+	BoolMatrix& operator|=(const BoolMatrix& rhs);
 	// Построчное побитовое исключающее ИЛИ(^=)
-
+	BoolMatrix& operator^=(const BoolMatrix& rhs);
 	// Построчная побитовая инверсия(~)
 	BoolMatrix operator~() const;
 private:
@@ -64,3 +65,6 @@ private:
 };
 
 // Внешние логические операторы (&, |, ^)
+BoolMatrix operator&(const BoolMatrix& lhs, const BoolMatrix& rhs);
+BoolMatrix operator|(const BoolMatrix& lhs, const BoolMatrix& rhs);
+BoolMatrix operator^(const BoolMatrix& lhs, const BoolMatrix& rhs);

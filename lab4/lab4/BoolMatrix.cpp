@@ -142,18 +142,60 @@ BoolMatrix& BoolMatrix::operator=(const BoolMatrix& rhs) {
 	return *this;
 }
 // Получение строки([])
+BoolVector& BoolMatrix::operator[](size_t index) {
+	checkRow(index);
+	return matrix_[index];
+}
 
+const BoolVector& BoolMatrix::operator[](size_t index) const {
+	checkRow(index);
+	return matrix_[index];
+}
 // Построчное побитовое умножение(&=)
-
+BoolMatrix& BoolMatrix::operator&=(const BoolMatrix& rhs) {
+	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	for (size_t i = 0; i < rows_; ++i) {
+		matrix_[i] &= rhs.matrix_[i];
+	}
+	return *this;
+}
 // Построчное побитовое сложение(|=)
-
+BoolMatrix& BoolMatrix::operator|=(const BoolMatrix& rhs) {
+	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	for (size_t i = 0; i < rows_; ++i) {
+		matrix_[i] |= rhs.matrix_[i];
+	}
+	return *this;
+}
 // Построчное побитовое исключающее ИЛИ(^=)
-
+BoolMatrix& BoolMatrix::operator^=(const BoolMatrix& rhs) {
+	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	for (size_t i = 0; i < rows_; ++i) {
+		matrix_[i] ^= rhs.matrix_[i];
+	}
+	return *this;
+}
 // Построчная побитовая инверсия(~)
 BoolMatrix BoolMatrix::operator~() const {
 	BoolMatrix result(*this);
 	for (BoolVector& row : result.matrix_) {
 		row = ~row;
 	}
+	return result;
+}
+// Внешние логические операторы (&, |, ^)
+BoolMatrix operator&(const BoolMatrix& lhs, const BoolMatrix& rhs) {
+	BoolMatrix result(lhs);
+	result &= rhs;
+	return result;
+}
+BoolMatrix operator|(const BoolMatrix& lhs, const BoolMatrix& rhs) {
+	BoolMatrix result(lhs);
+	result |= rhs;
+	return result;
+}
+BoolMatrix operator^(const BoolMatrix& lhs, const BoolMatrix& rhs) {
+	BoolMatrix result(lhs);
+	result ^= rhs;
 	return result;
 }
