@@ -17,7 +17,9 @@ int main()
     list.remove(8);
     list += list2;
 
+    list = list2;
+
     cout << list << endl;
-    cout << list.getSize() << endl;
+    cout << list.size() << endl;
     cout << list.min();
 }

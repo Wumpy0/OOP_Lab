@@ -13,24 +13,12 @@ public:
 	// Деструктор
 	~List();
 	// Получение размера списка
-	size_t getSize() const;
+	size_t size() const;
 	// Обмен содержимого с другим списком (swap)
 	void swap(List& other);
 	// Ввод / вывод в консоль (потоковый)
-	friend std::ostream& operator<<(std::ostream& os, const List<T>& list) {
-		os << "[";
-		Node* current = list.head_;
-		if (current != nullptr) {
-			os << current->data_;
-		}
-		current = current->next_;
-		while (current != nullptr) {
-			os << ", " << current->data_;
-			current = current->next_;
-		}
-		os << "]";
-		return os;
-	}
+	template <typename U>
+	friend std::ostream& operator<<(std::ostream& os, const List<U>& list);
 	// Получение итераторов на начало / конец списка (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него)
 	// Поиск элемента по ключу (возвращает указатель / итератор на элемент или nullptr, если элемента нет в списке)
 	// Добавление элемента в голову
@@ -58,6 +46,17 @@ public:
 	// Сортировка списка
 
 	// Присваивание (=)
+	List& operator=(const List& other) {
+		if (this != &other) {
+			clear();
+			Node* current = other.head_;
+			while (current != nullptr) {
+				push_back(current->data_);
+				current = current->next_;
+			}
+		}
+		return *this;
+	}
 	// Получение ссылки на ключ элемента ([])
 	// Сравнение (==, !=)
 	bool operator==(const List& other) const;
@@ -114,7 +113,7 @@ List<T>::~List() {
 
 // Получение размера списка
 template <typename T>
-size_t List<T>::getSize() const { 
+size_t List<T>::size() const { 
 	return size_; 
 }
 
@@ -127,6 +126,21 @@ void List<T>::swap(List& other) {
 }
 
 // Ввод / вывод в консоль (потоковый)
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const List<T>& list) {
+	os << "[";
+	typename List<T>::Node* current = list.head_;
+	if (current != nullptr) {
+		os << current->data_;
+	}
+	current = current->next_;
+	while (current != nullptr) {
+		os << ", " << current->data_;
+		current = current->next_;
+	}
+	os << "]";
+	return os;
+}
 
 // Добавление элемента в голову
 template <typename T>
@@ -290,6 +304,8 @@ void List<T>::clear() {
 	tail_ = nullptr;
 	size_ = 0;
 }
+
+// Присваивание (=)
 
 // Сравнение
 template <typename T>
