@@ -4,6 +4,7 @@
 #include <cassert>
 #include <vector>
 #include "../../lab3/lab3/BoolVector.h"
+#include "../../lab2/lab2/Array.h"
 
 class BoolMatrix
 {
@@ -30,9 +31,9 @@ public:
 	// Вес матрицы(количество единичных компонент)
 	size_t weight() const;
 	// Конъюнкция всех строк(возвращает булев вектор)
-	BoolVector conjunction();
+	BoolVector conjunction() const;
 	// Дизъюнкция всех строк(возвращает булев вектор)
-	BoolVector disjunction();
+	BoolVector disjunction() const;
 	// Вес j - ой строки
 	size_t rowWeight(size_t j) const;
 	// Инверсия i - ой компоненты j - ой строки + 
@@ -55,7 +56,7 @@ public:
 	// Построчная побитовая инверсия(~)
 	BoolMatrix operator~() const;
 private:
-	std::vector<BoolVector> matrix_;
+	Array<BoolVector> matrix_;
 	size_t rows_;
 	size_t cols_;
 private:

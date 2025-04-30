@@ -20,7 +20,7 @@ BoolMatrix::BoolMatrix(size_t rows, size_t cols, bool value) :
 	cols_(cols) 
 {
 	for (size_t i = 0; i < rows_; ++i) {
-		matrix_.emplace_back(cols_, value);
+		matrix_ += BoolVector(cols_, value);
 	}
 }
 
@@ -37,7 +37,7 @@ BoolMatrix::BoolMatrix(const std::vector<const char*>& charMatrix) {
 
 	for (const char* row : charMatrix) {
 		assert(strlen(row) == cols_);
-		matrix_.emplace_back(row);
+		matrix_ += BoolVector(row);
 	}
 }
 
@@ -83,7 +83,8 @@ size_t BoolMatrix::weight() const {
 }
 
 // Конъюнкция всех строк(возвращает булев вектор)
-BoolVector BoolMatrix::conjunction() {
+BoolVector BoolMatrix::conjunction() const {
+	checkRow(0);
 	BoolVector result = matrix_[0];
 	for (size_t i = 1; i < rows_; ++i) {
 		result &= matrix_[i];
@@ -92,7 +93,8 @@ BoolVector BoolMatrix::conjunction() {
 }
 
 // Дизъюнкция всех строк(возвращает булев вектор)
-BoolVector BoolMatrix::disjunction() {
+BoolVector BoolMatrix::disjunction() const {
+	checkRow(0);
 	BoolVector result = matrix_[0];
 	for (size_t i = 1; i < rows_; ++i) {
 		result |= matrix_[i];
@@ -153,7 +155,7 @@ const BoolVector& BoolMatrix::operator[](size_t index) const {
 }
 // Построчное побитовое умножение(&=)
 BoolMatrix& BoolMatrix::operator&=(const BoolMatrix& rhs) {
-	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	assert(rows_ == rhs.rows_ && cols_ == rhs.cols_);
 	for (size_t i = 0; i < rows_; ++i) {
 		matrix_[i] &= rhs.matrix_[i];
 	}
@@ -161,7 +163,7 @@ BoolMatrix& BoolMatrix::operator&=(const BoolMatrix& rhs) {
 }
 // Построчное побитовое сложение(|=)
 BoolMatrix& BoolMatrix::operator|=(const BoolMatrix& rhs) {
-	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	assert(rows_ == rhs.rows_ && cols_ == rhs.cols_);
 	for (size_t i = 0; i < rows_; ++i) {
 		matrix_[i] |= rhs.matrix_[i];
 	}
@@ -169,7 +171,7 @@ BoolMatrix& BoolMatrix::operator|=(const BoolMatrix& rhs) {
 }
 // Построчное побитовое исключающее ИЛИ(^=)
 BoolMatrix& BoolMatrix::operator^=(const BoolMatrix& rhs) {
-	assert(rows_ == rhs.rows_ || cols_ == rhs.cols_);
+	assert(rows_ == rhs.rows_ && cols_ == rhs.cols_);
 	for (size_t i = 0; i < rows_; ++i) {
 		matrix_[i] ^= rhs.matrix_[i];
 	}
