@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <iostream>
 #include <cassert>
@@ -6,67 +6,70 @@
 template <typename T>
 class List {
 public:
-	// Конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования)
+	class Iterator {
+		typename List<T>::Node* current_;
+	public:
+		Iterator(typename List<T>::Node* node = nullptr);
+		T& operator*();
+		Iterator& operator++();
+		Iterator operator++(int);
+		Iterator& operator--();
+		Iterator operator--(int);
+		bool operator==(const Iterator& other) const;
+		bool operator!=(const Iterator& other) const;
+	};
+	class ConstIterator {};
+public:
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РёР· РѕР±С‹С‡РЅРѕРіРѕ РјР°СЃСЃРёРІР°, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ)
 	List();
 	List(const T* array, size_t arraySize);
 	List(const List& other);
-	// Деструктор
+	// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
 	~List();
-	// Получение размера списка
+	// РџРѕР»СѓС‡РµРЅРёРµ СЂР°Р·РјРµСЂР° СЃРїРёСЃРєР°
 	size_t size() const;
-	// Обмен содержимого с другим списком (swap)
+	// РћР±РјРµРЅ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ СЃ РґСЂСѓРіРёРј СЃРїРёСЃРєРѕРј (swap)
 	void swap(List& other);
-	// Ввод / вывод в консоль (потоковый)
+	// Р’РІРѕРґ / РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ (РїРѕС‚РѕРєРѕРІС‹Р№)
 	template <typename U>
 	friend std::ostream& operator<<(std::ostream& os, const List<U>& list);
-	// Получение итераторов на начало / конец списка (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него)
-	// Поиск элемента по ключу (возвращает указатель / итератор на элемент или nullptr, если элемента нет в списке)
-	// Добавление элемента в голову
+	// РџРѕР»СѓС‡РµРЅРёРµ РёС‚РµСЂР°С‚РѕСЂРѕРІ РЅР° РЅР°С‡Р°Р»Рѕ / РєРѕРЅРµС† СЃРїРёСЃРєР° (РјРµС‚РѕРґС‹ РґРѕР»Р¶РЅС‹ РЅР°Р·С‹РІР°С‚СЊСЃСЏ begin Рё end. РњРµС‚РѕРґ end РґРѕР»Р¶РµРЅ РІРѕР·РІСЂР°С‰Р°С‚СЊ РёС‚РµСЂР°С‚РѕСЂ РЅРµ РЅР° РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚, Р° Р·Р° РїРѕР·РёС†РёСЋ РїРѕСЃР»Рµ РЅРµРіРѕ)
+	Iterator begin();
+	Iterator end();
+	// РџРѕРёСЃРє СЌР»РµРјРµРЅС‚Р° РїРѕ РєР»СЋС‡Сѓ (РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ / РёС‚РµСЂР°С‚РѕСЂ РЅР° СЌР»РµРјРµРЅС‚ РёР»Рё nullptr, РµСЃР»Рё СЌР»РµРјРµРЅС‚Р° РЅРµС‚ РІ СЃРїРёСЃРєРµ)
+	// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РІ РіРѕР»РѕРІСѓ
 	void push_front(const T& value);
-	// Добавление элемента в хвост
+	// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РІ С…РІРѕСЃС‚
 	void push_back(const T& value);
-	// Добавление элемента на позицию
+	// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РЅР° РїРѕР·РёС†РёСЋ
 	void insert(size_t index, const T& value);
-	// Добавление элемента после ключа(после первого вхождения), по итератору)
-	// Удаление элемента из головы
+	// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕСЃР»Рµ РєР»СЋС‡Р°(РїРѕСЃР»Рµ РїРµСЂРІРѕРіРѕ РІС…РѕР¶РґРµРЅРёСЏ), РїРѕ РёС‚РµСЂР°С‚РѕСЂСѓ)
+	// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· РіРѕР»РѕРІС‹
 	void pop_front();
-	// Удаление элемента из хвоста
+	// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· С…РІРѕСЃС‚Р°
 	void pop_back();
-	// Удаление элемента на позиции
+	// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РЅР° РїРѕР·РёС†РёРё
 	void remove(size_t index);
-	// Удаление элемента по ключу(первое вхождение), по итератору)
-	// Удаление диапазона элементов с помощью итераторов
-	// Поиск максимального / минимального элемента
+	// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїРѕ РєР»СЋС‡Сѓ(РїРµСЂРІРѕРµ РІС…РѕР¶РґРµРЅРёРµ), РїРѕ РёС‚РµСЂР°С‚РѕСЂСѓ)
+	// РЈРґР°Р»РµРЅРёРµ РґРёР°РїР°Р·РѕРЅР° СЌР»РµРјРµРЅС‚РѕРІ СЃ РїРѕРјРѕС‰СЊСЋ РёС‚РµСЂР°С‚РѕСЂРѕРІ
+	// РџРѕРёСЃРє РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ / РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 	T max() const;
 	T min() const;
-	// IsEmpty() - возвращает true, если список пуст
+	// IsEmpty() - РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚
 	bool isEmpty() const;
-	// Очистка списка
+	// РћС‡РёСЃС‚РєР° СЃРїРёСЃРєР°
 	void clear();
-	// Сортировка списка
+	// РЎРѕСЂС‚РёСЂРѕРІРєР° СЃРїРёСЃРєР°
 
-	// Присваивание (=)
-	List& operator=(const List& other) {
-		if (this != &other) {
-			clear();
-			Node* current = other.head_;
-			while (current != nullptr) {
-				push_back(current->data_);
-				current = current->next_;
-			}
-		}
-		return *this;
-	}
-	// Получение ссылки на ключ элемента ([])
-	// Сравнение (==, !=)
+	// РџСЂРёСЃРІР°РёРІР°РЅРёРµ (=)
+	List& operator=(const List& other);
+	// РџРѕР»СѓС‡РµРЅРёРµ СЃСЃС‹Р»РєРё РЅР° РєР»СЋС‡ СЌР»РµРјРµРЅС‚Р° ([])
+	// РЎСЂР°РІРЅРµРЅРёРµ (==, !=)
 	bool operator==(const List& other) const;
 	bool operator!=(const List& other) const;
-	// Сложение (конкатенация) списков (+, +=)
+	// РЎР»РѕР¶РµРЅРёРµ (РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ) СЃРїРёСЃРєРѕРІ (+, +=)
 	List& operator+=(const List& other);
 	List operator+(const List& other) const;
-public:
-	class Iterator {};
-	class ConstIterator {};
 private:
 	class Node {
 	public:
@@ -82,12 +85,12 @@ private:
 	size_t size_;
 };
 
-// Конструкторы:
-// По умолчанию
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹:
+// РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 template <typename T>
 List<T>::List() : head_(nullptr), tail_(nullptr), size_(0) {}
 
-// Конструктор из обычного массива
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РёР· РѕР±С‹С‡РЅРѕРіРѕ РјР°СЃСЃРёРІР°
 template <typename T>
 List<T>::List(const T* array, size_t arraySize) : head_(nullptr), tail_(nullptr), size_(0) {
 	for (size_t i = 0; i < arraySize; ++i) {
@@ -95,7 +98,7 @@ List<T>::List(const T* array, size_t arraySize) : head_(nullptr), tail_(nullptr)
 	}
 }
 
-// Конструктор копирования
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 template <typename T>
 List<T>::List(const List& other) : head_(nullptr), tail_(nullptr), size_(0) {
 	Node* current = other.head_;
@@ -105,19 +108,19 @@ List<T>::List(const List& other) : head_(nullptr), tail_(nullptr), size_(0) {
 	}
 }
 
-// Деструктор
+// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
 template <typename T>
 List<T>::~List() {
 	clear();
 }
 
-// Получение размера списка
+// РџРѕР»СѓС‡РµРЅРёРµ СЂР°Р·РјРµСЂР° СЃРїРёСЃРєР°
 template <typename T>
 size_t List<T>::size() const { 
 	return size_; 
 }
 
-// Обмен содержимого с другим списком (swap)
+// РћР±РјРµРЅ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ СЃ РґСЂСѓРіРёРј СЃРїРёСЃРєРѕРј (swap)
 template <typename T>
 void List<T>::swap(List& other) {
 	std::swap(head_, other.head_);
@@ -125,7 +128,7 @@ void List<T>::swap(List& other) {
 	std::swap(size_, other.size_);
 }
 
-// Ввод / вывод в консоль (потоковый)
+// Р’РІРѕРґ / РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ (РїРѕС‚РѕРєРѕРІС‹Р№)
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const List<T>& list) {
 	os << "[";
@@ -142,7 +145,18 @@ std::ostream& operator<<(std::ostream& os, const List<T>& list) {
 	return os;
 }
 
-// Добавление элемента в голову
+// РџРѕР»СѓС‡РµРЅРёРµ РёС‚РµСЂР°С‚РѕСЂРѕРІ РЅР° РЅР°С‡Р°Р»Рѕ / РєРѕРЅРµС† СЃРїРёСЃРєР° (РјРµС‚РѕРґС‹ РґРѕР»Р¶РЅС‹ РЅР°Р·С‹РІР°С‚СЊСЃСЏ begin Рё end. РњРµС‚РѕРґ end РґРѕР»Р¶РµРЅ РІРѕР·РІСЂР°С‰Р°С‚СЊ РёС‚РµСЂР°С‚РѕСЂ РЅРµ РЅР° РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚, Р° Р·Р° РїРѕР·РёС†РёСЋ РїРѕСЃР»Рµ РЅРµРіРѕ)
+template <typename T>
+typename List<T>::Iterator List<T>::begin() {
+	return Iterator(head_);
+}
+
+template <typename T>
+typename List<T>::Iterator List<T>::end() {
+	return Iterator(tail_);
+}
+
+// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РІ РіРѕР»РѕРІСѓ
 template <typename T>
 void List<T>::push_front(const T& value) {
 	Node* newNode = new Node(value);
@@ -158,7 +172,7 @@ void List<T>::push_front(const T& value) {
 	size_++;
 }
 
-// Добавление элемента в хвост
+// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РІ С…РІРѕСЃС‚
 template <typename T>
 void List<T>::push_back(const T& value) {
 	Node* newNode = new Node(value);
@@ -174,7 +188,7 @@ void List<T>::push_back(const T& value) {
 	size_++;
 }
 
-// Добавление элемента на позицию
+// Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РЅР° РїРѕР·РёС†РёСЋ
 template <typename T>
 void List<T>::insert(size_t index, const T& value) {
 	assert(index >= 0 && index <= size_);
@@ -200,7 +214,7 @@ void List<T>::insert(size_t index, const T& value) {
 	}
 }
 
-// Удаление элемента из головы
+// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· РіРѕР»РѕРІС‹
 template <typename T>
 void List<T>::pop_front() {
 	if (head_ == nullptr) return;
@@ -216,7 +230,7 @@ void List<T>::pop_front() {
 	delete temp;
 	size_--;
 }
-// Удаление элемента из хвоста
+// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· С…РІРѕСЃС‚Р°
 template <typename T>
 void List<T>::pop_back() {
 	if (tail_ == nullptr) return;
@@ -233,7 +247,7 @@ void List<T>::pop_back() {
 	size_--;
 }
 
-// Удаление элемента на позиции
+// РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РЅР° РїРѕР·РёС†РёРё
 template <typename T>
 void List<T>::remove(size_t index) {
 	assert(index >= 0 && index < size_);
@@ -257,7 +271,7 @@ void List<T>::remove(size_t index) {
 	}
 }
 
-// Поиск максимального / минимального элемента
+// РџРѕРёСЃРє РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ / РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 template <typename T>
 T List<T>::max() const {
 	assert(!isEmpty());
@@ -287,13 +301,13 @@ T List<T>::min() const {
 	return minVal;
 }
 
-// IsEmpty() - возвращает true, если список пуст
+// IsEmpty() - РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚
 template <typename T>
 bool List<T>::isEmpty() const {
 	return size_ == 0; 
 }
 
-// Очистка списка
+// РћС‡РёСЃС‚РєР° СЃРїРёСЃРєР°
 template <typename T>
 void List<T>::clear() {
 	while (head_ != nullptr) {
@@ -305,9 +319,21 @@ void List<T>::clear() {
 	size_ = 0;
 }
 
-// Присваивание (=)
+// РџСЂРёСЃРІР°РёРІР°РЅРёРµ (=)
+template <typename T>
+List<T>& List<T>::operator=(const List& other) {
+	if (this != &other) {
+		clear();
+		Node* current = other.head_;
+		while (current != nullptr) {
+			push_back(current->data_);
+			current = current->next_;
+		}
+	}
+	return *this;
+}
 
-// Сравнение
+// РЎСЂР°РІРЅРµРЅРёРµ
 template <typename T>
 bool List<T>::operator==(const List& other) const {
 	if (size_ != other.size_) return false;
@@ -328,7 +354,7 @@ bool List<T>::operator!=(const List& other) const {
 	return !(*this == other);
 }
 
-// Сложение (конкатенация) списков (+, +=)
+// РЎР»РѕР¶РµРЅРёРµ (РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ) СЃРїРёСЃРєРѕРІ (+, +=)
 template <typename T>
 List<T>& List<T>::operator+=(const List& other) {
 	Node* current = other.head_;
@@ -345,6 +371,56 @@ List<T> List<T>::operator+(const List& other) const {
 	return result;
 }
 
+// Iterator
+template <typename T>
+List<T>::Iterator::Iterator(List<T>::Node* node)
+	: current_(node) {}
+
+template <typename T>
+T& List<T>::Iterator::operator*() {
+	assert(*this != nullptr);
+	return current_->data_; 
+}
+
+template <typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator++() {
+	assert(*this != nullptr);
+	current_ = current_->next_;
+	return *this;
+}
+
+template <typename T>
+typename List<T>::Iterator List<T>::Iterator::operator++(int) {
+	assert(*this != nullptr);
+	Iterator tmp = *this;
+	current_ = current_->next_;
+	return tmp;
+}
+
+template <typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator--() {
+	assert(*this != nullptr);
+	current_ = current_->previous_;
+	return *this;
+}
+
+template <typename T>
+typename List<T>::Iterator List<T>::Iterator::operator--(int) {
+	assert(*this != nullptr);
+	Iterator tmp = *this;
+	current_ = current_->previous_;
+	return tmp;
+}
+
+template <typename T>
+bool List<T>::Iterator::operator==(const Iterator& other) const {
+	return current_ == other.current_;
+}
+
+template <typename T>
+bool List<T>::Iterator::operator!=(const Iterator& other) const {
+	return current_ != other.current_;
+}
 
 // Node
 template <typename T>
