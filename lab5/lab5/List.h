@@ -7,8 +7,8 @@ template <typename T>
 class List {
 public:
 	class Iterator {
-		typename List<T>::Node* current_;
 	public:
+		friend class List<T>;
 		Iterator(typename List<T>::Node* node = nullptr);
 		T& operator*();
 		Iterator& operator++();
@@ -17,8 +17,22 @@ public:
 		Iterator operator--(int);
 		bool operator==(const Iterator& other) const;
 		bool operator!=(const Iterator& other) const;
+	private:
+		typename List<T>::Node* current_;
 	};
-	class ConstIterator {};
+	class ConstIterator {
+	public:
+		ConstIterator(const typename List<T>::Node* node = nullptr);
+		const T& operator*() const;
+		ConstIterator& operator++();
+		ConstIterator operator++(int);
+		ConstIterator& operator--();
+		ConstIterator operator--(int);
+		bool operator==(const ConstIterator& other) const;
+		bool operator!=(const ConstIterator& other) const;
+	private:
+		const typename List<T>::Node* current_;
+	};
 public:
 	// Конструкторы (по умолчанию, конструктор из обычного массива, конструктор копирования)
 	List();
@@ -33,10 +47,16 @@ public:
 	// Ввод / вывод в консоль (потоковый)
 	template <typename U>
 	friend std::ostream& operator<<(std::ostream& os, const List<U>& list);
+	template <typename U>
+	friend std::istream& operator>>(std::istream& is, List<U>& list);
 	// Получение итераторов на начало / конец списка (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него)
 	Iterator begin();
 	Iterator end();
+	ConstIterator begin() const;
+	ConstIterator end() const;
 	// Поиск элемента по ключу (возвращает указатель / итератор на элемент или nullptr, если элемента нет в списке)
+	Iterator find(const T& key);
+	ConstIterator find(const T& key) const;
 	// Добавление элемента в голову
 	void push_front(const T& value);
 	// Добавление элемента в хвост
@@ -44,14 +64,19 @@ public:
 	// Добавление элемента на позицию
 	void insert(size_t index, const T& value);
 	// Добавление элемента после ключа(после первого вхождения), по итератору)
+	void insertAfterKey(const T& key, const T& value);
 	// Удаление элемента из головы
 	void pop_front();
 	// Удаление элемента из хвоста
 	void pop_back();
 	// Удаление элемента на позиции
 	void remove(size_t index);
-	// Удаление элемента по ключу(первое вхождение), по итератору)
+	// Удаление элемента по ключу(первое вхождение)
+	void removeByKey(const T& key);
+	// Удаление элемента по итератору
+	void remove(const Iterator& it);
 	// Удаление диапазона элементов с помощью итераторов
+	void remove(const Iterator& first, const Iterator& last);
 	// Поиск максимального / минимального элемента
 	T max() const;
 	T min() const;
@@ -60,10 +85,12 @@ public:
 	// Очистка списка
 	void clear();
 	// Сортировка списка
-
+	void sort();
 	// Присваивание (=)
 	List& operator=(const List& other);
 	// Получение ссылки на ключ элемента ([])
+	T& operator[](size_t index);
+	const T& operator[](size_t index) const;
 	// Сравнение (==, !=)
 	bool operator==(const List& other) const;
 	bool operator!=(const List& other) const;
@@ -135,14 +162,23 @@ std::ostream& operator<<(std::ostream& os, const List<T>& list) {
 	typename List<T>::Node* current = list.head_;
 	if (current != nullptr) {
 		os << current->data_;
+		current = current->next_;
 	}
-	current = current->next_;
 	while (current != nullptr) {
 		os << ", " << current->data_;
 		current = current->next_;
 	}
 	os << "]";
 	return os;
+}
+
+template <typename T>
+std::istream& operator>>(std::istream& is, List<T>& list) {
+	T value;
+	while (is >> value) {
+		list.push_back(value);
+	}
+	return is;
 }
 
 // Получение итераторов на начало / конец списка (методы должны называться begin и end. Метод end должен возвращать итератор не на последний элемент, а за позицию после него)
@@ -153,7 +189,42 @@ typename List<T>::Iterator List<T>::begin() {
 
 template <typename T>
 typename List<T>::Iterator List<T>::end() {
-	return Iterator(tail_);
+	return Iterator(nullptr);
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::begin() const {
+	return ConstIterator(head_);
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::end() const {
+	return ConstIterator(nullptr);
+}
+
+// Поиск элемента по ключу (возвращает указатель / итератор на элемент или nullptr, если элемента нет в списке)
+template <typename T>
+typename List<T>::Iterator List<T>::find(const T& key) {
+	Node* current = head_;
+	while (current != nullptr) {
+		if (current->data_ == key) {
+			return Iterator(current);
+		}
+		current = current->next_;
+	}
+	return end();
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::find(const T& key) const {
+	const Node* current = head_;
+	while (current != nullptr) {
+		if (current->data_ == key) {
+			return ConstIterator(current);
+		}
+		current = current->next_;
+	}
+	return end();
 }
 
 // Добавление элемента в голову
@@ -214,6 +285,20 @@ void List<T>::insert(size_t index, const T& value) {
 	}
 }
 
+// Добавление элемента после ключа(после первого вхождения), по итератору)
+template <typename T>
+void List<T>::insertAfterKey(const T& key, const T& value) {
+	Node* current = head_;
+	size_t index = 0;
+	while (current && current->data_ != key) {
+		current = current->next_;
+		++index;
+	}
+	if (current) {
+		insert(++index, value);
+	}
+}
+
 // Удаление элемента из головы
 template <typename T>
 void List<T>::pop_front() {
@@ -250,7 +335,7 @@ void List<T>::pop_back() {
 // Удаление элемента на позиции
 template <typename T>
 void List<T>::remove(size_t index) {
-	assert(index >= 0 && index < size_);
+	assert(index < size_);
 
 	if (index == 0) {
 		pop_front();
@@ -271,6 +356,56 @@ void List<T>::remove(size_t index) {
 	}
 }
 
+// Удаление элемента по ключу(первое вхождение)
+template <typename T>
+void List<T>::removeByKey(const T& key) {
+	Iterator it = this->find(key);
+	remove(it);
+}
+
+// Удаление элемента по итератору
+template <typename T>
+void List<T>::remove(const Iterator& it) {
+	if (it == end()) {
+		return;
+	}
+
+	Node* current = it.current_;
+	if (current == head_) {
+		pop_front();
+	}
+	else if (current == tail_) {
+		pop_back();
+	}
+	else {
+		current->previous_->next_ = current->next_;
+		current->next_->previous_ = current->previous_;
+		delete current;
+		size_--;
+	}
+}
+
+// Удаление диапазона элементов с помощью итераторов
+template <typename T>
+void List<T>::remove(const Iterator& first, const Iterator& last) {
+	if (first == last) {
+		return;
+	}
+
+	Iterator current = first;
+
+	while (current != end() && current != last) {
+		remove(current++);
+	}
+
+	if (current == end() && last != end()) {
+		current = begin();
+		while (current != last) {
+			remove(current++);
+		}
+	}
+}
+
 // Поиск максимального / минимального элемента
 template <typename T>
 T List<T>::max() const {
@@ -286,6 +421,7 @@ T List<T>::max() const {
 	}
 	return maxVal;
 }
+
 template <typename T>
 T List<T>::min() const {
 	assert(!isEmpty());
@@ -319,6 +455,25 @@ void List<T>::clear() {
 	size_ = 0;
 }
 
+// Сортировка списка
+template <typename T>
+void List<T>::sort() {
+	if (size_ < 2) return;
+
+	bool swapped;
+	do {
+		swapped = false;
+		Node* current = head_;
+		while (current->next_) {
+			if (current->data_ > current->next_->data_) {
+				std::swap(current->data_, current->next_->data_);
+				swapped = true;
+			}
+			current = current->next_;
+		}
+	} while (swapped);
+}
+
 // Присваивание (=)
 template <typename T>
 List<T>& List<T>::operator=(const List& other) {
@@ -333,10 +488,35 @@ List<T>& List<T>::operator=(const List& other) {
 	return *this;
 }
 
+// Получение ссылки на ключ элемента ([])
+template <typename T>
+T& List<T>::operator[](size_t index) {
+	assert(index <= size_);
+
+	Node* current = head_;
+	for (size_t i = 0; i < index; ++i) {
+		current = current->next_;
+	}
+	return current->data_;
+}
+
+template <typename T>
+const T& List<T>::operator[](size_t index) const {
+	assert(index <= size_);
+
+	Node* current = head_;
+	for (size_t i = 0; i < index; ++i) {
+		current = current->next_;
+	}
+	return current->data_;
+}
+
 // Сравнение
 template <typename T>
 bool List<T>::operator==(const List& other) const {
-	if (size_ != other.size_) return false;
+	if (size_ != other.size_) {
+		return false;
+	}
 
 	Node* current1 = head_;
 	Node* current2 = other.head_;
@@ -349,6 +529,7 @@ bool List<T>::operator==(const List& other) const {
 	}
 	return true;
 }
+
 template <typename T>
 bool List<T>::operator!=(const List& other) const {
 	return !(*this == other);
@@ -364,6 +545,7 @@ List<T>& List<T>::operator+=(const List& other) {
 	}
 	return *this;
 }
+
 template <typename T>
 List<T> List<T>::operator+(const List& other) const {
 	List result = *this;
@@ -373,25 +555,25 @@ List<T> List<T>::operator+(const List& other) const {
 
 // Iterator
 template <typename T>
-List<T>::Iterator::Iterator(List<T>::Node* node)
+List<T>::Iterator::Iterator(typename List<T>::Node* node)
 	: current_(node) {}
 
 template <typename T>
 T& List<T>::Iterator::operator*() {
-	assert(*this != nullptr);
+	assert(current_ != nullptr);
 	return current_->data_; 
 }
 
 template <typename T>
 typename List<T>::Iterator& List<T>::Iterator::operator++() {
-	assert(*this != nullptr);
+	assert(current_ != nullptr);
 	current_ = current_->next_;
 	return *this;
 }
 
 template <typename T>
 typename List<T>::Iterator List<T>::Iterator::operator++(int) {
-	assert(*this != nullptr);
+	assert(current_ != nullptr);
 	Iterator tmp = *this;
 	current_ = current_->next_;
 	return tmp;
@@ -399,14 +581,14 @@ typename List<T>::Iterator List<T>::Iterator::operator++(int) {
 
 template <typename T>
 typename List<T>::Iterator& List<T>::Iterator::operator--() {
-	assert(*this != nullptr);
+	assert(current_ != nullptr);
 	current_ = current_->previous_;
 	return *this;
 }
 
 template <typename T>
 typename List<T>::Iterator List<T>::Iterator::operator--(int) {
-	assert(*this != nullptr);
+	assert(current_ != nullptr);
 	Iterator tmp = *this;
 	current_ = current_->previous_;
 	return tmp;
@@ -419,6 +601,57 @@ bool List<T>::Iterator::operator==(const Iterator& other) const {
 
 template <typename T>
 bool List<T>::Iterator::operator!=(const Iterator& other) const {
+	return current_ != other.current_;
+}
+
+// ConstIterator
+template <typename T>
+List<T>::ConstIterator::ConstIterator(const typename List<T>::Node* node)
+	: current_(node) {}
+
+template <typename T>
+const T& List<T>::ConstIterator::operator*() const {
+	assert(current_ != nullptr);
+	return current_->data_;
+}
+
+template <typename T>
+typename List<T>::ConstIterator& List<T>::ConstIterator::operator++() {
+	assert(current_ != nullptr);
+	current_ = current_->next_;
+	return *this;
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int) {
+	assert(current_ != nullptr);
+	ConstIterator tmp = *this;
+	current_ = current_->next_;
+	return tmp;
+}
+
+template <typename T>
+typename List<T>::ConstIterator& List<T>::ConstIterator::operator--() {
+	assert(current_ != nullptr);
+	current_ = current_->previous_;
+	return *this;
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::ConstIterator::operator--(int) {
+	assert(current_ != nullptr);
+	ConstIterator tmp = *this;
+	current_ = current_->previous_;
+	return tmp;
+}
+
+template <typename T>
+bool List<T>::ConstIterator::operator==(const ConstIterator& other) const {
+	return current_ == other.current_;
+}
+
+template <typename T>
+bool List<T>::ConstIterator::operator!=(const ConstIterator& other) const {
 	return current_ != other.current_;
 }
 
